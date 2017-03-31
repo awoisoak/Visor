@@ -5,11 +5,11 @@ package com.awoisoak.visor.data.source;
  */
 
 public class Post {
-    String id;
+    String id; //TODO make it int?
     String title;
     String creationDate;
     String modificationDate;
-    String wpFeaturedMedia;
+    String featuredImage; //Medium size image (approx 200x204)
     String wpAttachment;
 
 
@@ -17,8 +17,33 @@ public class Post {
                 String wpAttachment) {
         this.id = id;
         this.creationDate = date;
+        this.modificationDate = modificationDate;
         this.title = title;
-        this.wpFeaturedMedia = wpFeaturedMedia;
+        this.featuredImage = wpFeaturedMedia;
         this.wpAttachment = wpAttachment;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getModificationDate() {
+        return modificationDate;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getWpAttachment() {
+        return wpAttachment;
+    }
+
+    public String getFeaturedImage() {
+        return featuredImage;
     }
 }

@@ -56,8 +56,8 @@ public class WPManager implements WPAPI {
 
 
     @Override
-    public void listPosts(@Nullable int page, WPListener<ListPostsResponse> l) {
-        Call<ListPostsResponse> c = service.listPosts(page);
+    public void listPosts(@Nullable int offset, WPListener<ListPostsResponse> l) {
+        Call<ListPostsResponse> c = service.listPosts(offset);
         responseRequest(c, l);
     }
 

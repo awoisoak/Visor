@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#e10031</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#ea00ff</color>
+
+    <color name="black_overlay">#66000000</color>
+    <color name="wallet_background">#00ADE1</color>
+    <color name="text_color_primary">#FFFFFF</color>
+    <color name="yellow">#ffe100</color>
+    <color name="white">#FFFFFF</color>
+    <color name="blue_clear">#b6e2f4</color>
+    <color name="black">#000000</color>
+    <color name="orange">#ff6f00</color>
+    <color name="green_bright">#33ff00</color>
+    <color name="green_dark">#3d8929</color>
+
 </resources>

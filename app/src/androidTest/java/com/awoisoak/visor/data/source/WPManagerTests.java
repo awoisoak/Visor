@@ -27,11 +27,11 @@ public class WPManagerTests {
 
     @Test
     public void test1_listPosts() throws Exception {
-        WPManager.getInstance().listPosts(2, new WPListener<ListPostsResponse>() {
+        WPManager.getInstance().listPosts(0, new WPListener<ListPostsResponse>() {
             @Override
             public void onResponse(ListPostsResponse response) {
                 assertEquals(response.getCode(), OK_RESPONSE);
-                mPostId = response.getList().get(2).id;
+                mPostId = response.getList().get(0).id;
             }
 
             @Override

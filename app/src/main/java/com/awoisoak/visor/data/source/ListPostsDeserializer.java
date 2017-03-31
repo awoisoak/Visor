@@ -47,11 +47,16 @@ class ListPostsDeserializer<T extends WPResponse> implements JsonDeserializer<Li
             modificationDate = post.getAsJsonObject().get("modified");
             title = post.getAsJsonObject().get("title").getAsJsonObject().get("rendered");
             links = post.getAsJsonObject().get("_links");
-            featuredMedia = links.getAsJsonObject().get("wp:featuredmedia").getAsJsonArray().get(0).getAsJsonObject().get("href");
             images = links.getAsJsonObject().get("wp:attachment").getAsJsonArray().get(0).getAsJsonObject().get("href");
+            featuredMedia =
+                    post.getAsJsonObject().get("_embedded").getAsJsonObject().get("wp:featuredmedia").getAsJsonArray()
+                            .get(0).getAsJsonObject().get("media_details").getAsJsonObject()
+                            .get("sizes").getAsJsonObject().get("medium-large").getAsJsonObject().get("source_url");
 
-            postsList.add(new Post(id.toString(), creationDate.toString(), modificationDate.toString(), title.toString(), featuredMedia.toString(),
-                                     images.toString()));
+            postsList
+                    .add(new Post(id.toString(), creationDate.toString(), modificationDate.toString(), title.toString(),
+                                  featuredMedia.toString(),
+                                  images.toString()));
         }
         ListPostsResponse r = new ListPostsResponse(postsList);
         return r;

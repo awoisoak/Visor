@@ -14,11 +14,14 @@ import retrofit2.http.Query;
 public interface WPService {
     /**
      * List all posts in the website
-     * @param page, current page of the collection
+     * ?_embed is added to the request in order to include the embedded media in the response (ex. featured media)
+     * avoiding us to trigger a second request
+     *
+     * @param offset, current page of the collection
      * @return
      */
-    @GET("/wp-json/wp/v2/posts")
-    Call<ListPostsResponse> listPosts(@Query("page") int page);
+    @GET("/wp-json/wp/v2/posts?_embed")
+    Call<ListPostsResponse> listPosts(@Query("offset") int offset);
 
 
     /**
