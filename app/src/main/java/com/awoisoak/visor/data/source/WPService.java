@@ -1,6 +1,6 @@
 package com.awoisoak.visor.data.source;
 
-import com.awoisoak.visor.data.source.responses.ListPostsResponse;
+import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
 import com.awoisoak.visor.data.source.responses.MediaFromPostResponse;
 
 import retrofit2.Call;
@@ -21,7 +21,7 @@ public interface WPService {
      * @return
      */
     @GET("/wp-json/wp/v2/posts?_embed")
-    Call<ListPostsResponse> listPosts(@Query("offset") int offset);
+    Call<ListsPostsResponse> listPosts(@Query("offset") int offset);
 
 
     /**
@@ -30,6 +30,7 @@ public interface WPService {
      * @param parent, parent post Id
      * @return
      */
+    //TODO add offset
     @GET("/wp-json/wp/v2/media")
     Call<MediaFromPostResponse> retrieveAllMediaFromPost(@Query("parent") String parent);
 

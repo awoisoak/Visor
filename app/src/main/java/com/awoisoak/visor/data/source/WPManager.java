@@ -3,7 +3,7 @@ package com.awoisoak.visor.data.source;
 import android.support.annotation.Nullable;
 
 import com.awoisoak.visor.data.source.responses.ErrorResponse;
-import com.awoisoak.visor.data.source.responses.ListPostsResponse;
+import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
 import com.awoisoak.visor.data.source.responses.MediaFromPostResponse;
 import com.awoisoak.visor.data.source.responses.WPResponse;
 import com.google.gson.Gson;
@@ -30,7 +30,7 @@ public class WPManager implements WPAPI {
     static int NO_CODE = -1;
     private static WPManager instance;
     Gson gson = new GsonBuilder()
-            .registerTypeAdapter(ListPostsResponse.class, new ListPostsDeserializer<ListPostsResponse>())
+            .registerTypeAdapter(ListsPostsResponse.class, new ListPostsDeserializer<ListsPostsResponse>()).disableHtmlEscaping()
             .registerTypeAdapter(MediaFromPostResponse.class,
                                  new MediaFromPostDeserializer<MediaFromPostResponse>())
             .create();
@@ -56,8 +56,8 @@ public class WPManager implements WPAPI {
 
 
     @Override
-    public void listPosts(@Nullable int offset, WPListener<ListPostsResponse> l) {
-        Call<ListPostsResponse> c = service.listPosts(offset);
+    public void listPosts(@Nullable int offset, WPListener<ListsPostsResponse> l) {
+        Call<ListsPostsResponse> c = service.listPosts(offset);
         responseRequest(c, l);
     }
 

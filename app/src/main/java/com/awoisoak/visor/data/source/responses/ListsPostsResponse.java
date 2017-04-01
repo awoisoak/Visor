@@ -7,11 +7,11 @@ import java.util.List;
 /**
  * Response for a List Posts Requests
  */
-public class ListPostsResponse extends WPResponse{
+public class ListsPostsResponse extends WPResponse{
 
     List<Post> list;
 
-    public ListPostsResponse(List<Post> list) {
+    public ListsPostsResponse(List<Post> list) {
         this.list = list;
     }
 

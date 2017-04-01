@@ -1,17 +1,15 @@
 package com.awoisoak.visor.data.source;
 
-import com.awoisoak.visor.data.source.responses.ListPostsResponse;
+import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
 import com.awoisoak.visor.data.source.responses.WPResponse;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Specific Deserializer for ListPostsResponse
@@ -20,14 +18,26 @@ import java.util.List;
  */
 
 
-class ListPostsDeserializer<T extends WPResponse> implements JsonDeserializer<ListPostsResponse> {
+class ListPostsDeserializer<T extends WPResponse> implements JsonDeserializer<ListsPostsResponse> {
 
 
     public ListPostsDeserializer() {
     }
 
+
+    /**
+     * medium_large (768px) is not always available:
+     * https://make.wordpress.org/core/2015/11/10/responsive-images-in-wordpress-4-4/
+     * So we better go for small-size by now (400px)
+     *
+     * @param je
+     * @param type
+     * @param jdc
+     * @return
+     * @throws JsonParseException
+     */
     @Override
-    public ListPostsResponse deserialize(JsonElement je, Type type, JsonDeserializationContext jdc)
+    public ListsPostsResponse deserialize(JsonElement je, Type type, JsonDeserializationContext jdc)
             throws JsonParseException {
 
         JsonArray arrayOfPosts = je.getAsJsonArray();
@@ -51,14 +61,14 @@ class ListPostsDeserializer<T extends WPResponse> implements JsonDeserializer<Li
             featuredMedia =
                     post.getAsJsonObject().get("_embedded").getAsJsonObject().get("wp:featuredmedia").getAsJsonArray()
                             .get(0).getAsJsonObject().get("media_details").getAsJsonObject()
-                            .get("sizes").getAsJsonObject().get("medium-large").getAsJsonObject().get("source_url");
+                            .get("sizes").getAsJsonObject().get("small-size").getAsJsonObject().get("source_url");
 
             postsList
-                    .add(new Post(id.toString(), creationDate.toString(), modificationDate.toString(), title.toString(),
-                                  featuredMedia.toString(),
-                                  images.toString()));
+                    .add(new Post(id.toString(), creationDate.getAsString(), modificationDate.getAsString(), title.getAsString(),
+                                  featuredMedia.getAsString(),
+                                  images.getAsString()));
         }
-        ListPostsResponse r = new ListPostsResponse(postsList);
+        ListsPostsResponse r = new ListsPostsResponse(postsList);
         return r;
     }
 }

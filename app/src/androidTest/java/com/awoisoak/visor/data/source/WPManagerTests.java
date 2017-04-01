@@ -3,7 +3,7 @@ package com.awoisoak.visor.data.source;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.awoisoak.visor.data.source.responses.ErrorResponse;
-import com.awoisoak.visor.data.source.responses.ListPostsResponse;
+import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
 import com.awoisoak.visor.data.source.responses.MediaFromPostResponse;
 
 import org.junit.FixMethodOrder;
@@ -15,9 +15,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-/**
- * Created by awo on 31/03/17.
- */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4.class)
 public class WPManagerTests {
@@ -27,9 +24,9 @@ public class WPManagerTests {
 
     @Test
     public void test1_listPosts() throws Exception {
-        WPManager.getInstance().listPosts(0, new WPListener<ListPostsResponse>() {
+        WPManager.getInstance().listPosts(0, new WPListener<ListsPostsResponse>() {
             @Override
-            public void onResponse(ListPostsResponse response) {
+            public void onResponse(ListsPostsResponse response) {
                 assertEquals(response.getCode(), OK_RESPONSE);
                 mPostId = response.getList().get(0).id;
             }
