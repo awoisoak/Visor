@@ -66,10 +66,10 @@ public class PostGalleryAdapter extends RecyclerView.Adapter<PostGalleryAdapter.
         }
 
         public void bindPost(Image image) {
-            if (image.getLarge().equals("") || image.getLarge() == null) {
+            if (image.getPostBig().equals("") || image.getPostBig() == null) {
                 imageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.logo));
             }
-            Glide.with(mContext).load(image.getSquare()).error(R.drawable.hal_9000).placeholder(R.drawable.place_holder_black)
+            Glide.with(mContext).load(image.getLarge()).fitCenter()/*.centerCrop()*/.error(R.drawable.hal_9000).placeholder(R.drawable.place_holder_black)
                     .crossFade(1000).into(imageView);
             //            listener(
             //                    new RequestListener<String, GlideDrawable>() {

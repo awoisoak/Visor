@@ -28,7 +28,7 @@ class ListPostsDeserializer<T extends WPResponse> implements JsonDeserializer<Li
     /**
      * medium_large (768px) is not always available:
      * https://make.wordpress.org/core/2015/11/10/responsive-images-in-wordpress-4-4/
-     * So we better go for small-size by now (400px)
+     * So we better go for post-Big by now (840px)
      *
      * @param je
      * @param type

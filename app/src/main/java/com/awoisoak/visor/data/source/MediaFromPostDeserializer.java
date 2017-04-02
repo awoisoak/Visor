@@ -33,7 +33,8 @@ class MediaFromPostDeserializer<T extends WPResponse>
         ArrayList<Image> imagesList = new ArrayList<Image>();
         JsonElement thumbnail;
         JsonElement square;
-        JsonElement medium;
+        JsonElement smallSize;
+        JsonElement postBig;
         JsonElement large;
         JsonElement full;
         JsonElement sizes;
@@ -42,11 +43,12 @@ class MediaFromPostDeserializer<T extends WPResponse>
             sizes = post.getAsJsonObject().get("media_details").getAsJsonObject().get("sizes");
             thumbnail = sizes.getAsJsonObject().get("thumbnail").getAsJsonObject().get("source_url");
             square = sizes.getAsJsonObject().get("square").getAsJsonObject().get("source_url");
-            medium = sizes.getAsJsonObject().get("medium").getAsJsonObject().get("source_url");
+            smallSize = sizes.getAsJsonObject().get("small-size").getAsJsonObject().get("source_url");
+            postBig = sizes.getAsJsonObject().get("post-big").getAsJsonObject().get("source_url");
             large = sizes.getAsJsonObject().get("large").getAsJsonObject().get("source_url");
             full = sizes.getAsJsonObject().get("full").getAsJsonObject().get("source_url");
             imagesList
-                    .add(new Image(thumbnail.getAsString(), square.getAsString(), medium.getAsString(),
+                    .add(new Image(thumbnail.getAsString(), square.getAsString(), smallSize.getAsString(), postBig.getAsString(),
                                    large.getAsString(), full.getAsString()));
         }
         MediaFromPostResponse r = new MediaFromPostResponse(imagesList);
