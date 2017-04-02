@@ -1,6 +1,7 @@
 package com.awoisoak.visor.presentation.postgallery;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -8,8 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.awoisoak.visor.R;
@@ -32,6 +37,7 @@ public class PostGalleryActivity extends AppCompatActivity
 
     public static final String EXTRA_POST_ID = "post_id";
 
+    @BindView(R.id.post_gallery_relative_layout) RelativeLayout mRelativeLayout;
     @BindView(R.id.post_gallery_recycler) RecyclerView mRecyclerView;
     @BindView(R.id.post_gallery_progress_bar) ProgressBar mProgressBar;
 
@@ -50,7 +56,7 @@ public class PostGalleryActivity extends AppCompatActivity
         ButterKnife.bind(this);
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBar.getIndeterminateDrawable().setColorFilter(0xFFFF0000, android.graphics.PorterDuff.Mode.MULTIPLY);
-        mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -132,10 +138,62 @@ public class PostGalleryActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClickImage(Image image) {
+    public void onClickImage(ImageView photo,Image image) {
         Toast.makeText(this, "image was clicked!", Toast.LENGTH_SHORT).show();
-        mPresenter.showImage(image);
+//        mPresenter.showImage(image);
+//        ImageView mapView = (ImageView) findViewById(R.id.post_gallery_map);
+//        mapView.setImageDrawable(photo.getDrawable());
     }
+
+
+//    Bitmap bitmap;
+//    int originalPosition, width, height;
+//    @Override
+//    public void onTouch(View cardView, MotionEvent event) {
+//        ViewGroup.LayoutParams params = mRelativeLayout.getLayoutParams();
+//        ImageView imageView;
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_MOVE:
+//                int x = (int)event.getRawX();
+//                int y = (int) event.getRawY();
+////                params.leftMargin =  x - width / 2;
+////                params.topMargin =  y - height / 2;
+////                imageView = new ImageView(v.getContext());
+////                imageView.setLayoutParams(params);
+//                break;
+//            case MotionEvent.ACTION_DOWN:
+//                Toast.makeText(this, "image was touched | ACTION_DOWN", Toast.LENGTH_SHORT).show();
+////                imageView = new ImageView(v.getContext());
+//                ImageView photo = (ImageView) cardView.findViewById(R.id.item_post_gallery_image);
+////
+////                ViewGroup.LayoutParams currentParams = photo.getLayoutParams();
+////                photo.setLayoutParams(params);
+////                photo.requestLayout();
+//                ImageView mapView = (ImageView) findViewById(R.id.post_gallery_map);
+//                mapView.setImageDrawable(photo.getDrawable());
+//
+//                //                originalPosition = (int)v.getTag();
+//////                bitmap = mAdapter...pieces.remove(originalPosition);
+//////                mAdapter.notifyDataSetChanged();
+////                width = bitmap.getWidth(); //maybe you need the drawable to get the intrinsic original dimens
+////                height = bitmap.getHeight();
+////                imageView = new ImageView(v.getContext());
+////                params = new RelativeLayout.LayoutParams(width, height);
+////                imageView.setImageBitmap(bitmap);
+////                RelativeLayout container; //here you need to bind this view to your container of fragment, better if it RelativeLayout to do dragging
+////                container.addView(imageView, params);
+////                // what you need to do is inflate here
+//                break;
+//            case MotionEvent.ACTION_CANCEL:
+//            case MotionEvent.ACTION_UP:
+////                container.removeView(imageView);
+////                recycleAdapter.pieces.add(originalPosition, bitmap);
+////                recycleAdapter.nottifyDataSetChanged();
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 
     @Override
     public Activity getActivity() {
@@ -159,6 +217,7 @@ public class PostGalleryActivity extends AppCompatActivity
         super.onDestroy();
         mPresenter.onDestroy();
     }
+
 
 
 }

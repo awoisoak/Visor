@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<android.support.v7.widget.CardView
+<android.support.v7.widget.FitWindowsFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:contextClickable="true"
-    android:layout_height="200dp"
     android:layout_width="match_parent"
-    android:textAlignment="center"
-   >
-
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/item_post_gallery_image"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:scaleType="centerCrop"
+        android:layout_height="match_parent"
+        android:scaleType="centerInside"
         />
 
+</android.support.v7.widget.FitWindowsFrameLayout>
 
 
-</android.support.v7.widget.CardView>
+
+
+
+
+
+
 
 

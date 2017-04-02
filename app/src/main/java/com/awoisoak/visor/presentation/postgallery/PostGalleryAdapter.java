@@ -3,6 +3,7 @@ package com.awoisoak.visor.presentation.postgallery;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,8 +25,12 @@ public class PostGalleryAdapter extends RecyclerView.Adapter<PostGalleryAdapter.
     private Context mContext;
 
     public interface ImageClickListener {
-        void onClickImage(Image image);
+        void onClickImage(ImageView photo, Image image);
     }
+
+//    public interface GalleryOnTouchListener {
+//        void onTouch(View v, MotionEvent event);
+//    }
 
     public PostGalleryAdapter(List<Image> images, ImageClickListener listener, Context context) {
         mImages = images;
@@ -69,32 +74,20 @@ public class PostGalleryAdapter extends RecyclerView.Adapter<PostGalleryAdapter.
             if (image.getLarge().equals("") || image.getLarge() == null) {
                 imageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.logo));
             }
-            Glide.with(mContext).load(image.getSquare()).error(R.drawable.hal_9000).placeholder(R.drawable.gradient)
+            Glide.with(mContext).load(image.getLarge()).error(R.drawable.hal_9000).placeholder(R.drawable.gradient)
                     .crossFade(1000).into(imageView);
-            //            listener(
-            //                    new RequestListener<String, GlideDrawable>() {
-            //                        @Override
-            //                        public boolean onException(Exception e, String model, Target<GlideDrawable> target,
-            //                                                   boolean isFirstResource) {
-            //                            System.out.println("awoooo | Glider listeber | onException | printing trace...");
-            //                            e.printStackTrace();
-            //                            return false;
-            //                        }
-            //
-            //                        @Override
-            //                        public boolean onResourceReady(GlideDrawable resource, String model,
-            //                                                       Target<GlideDrawable> target,
-            //                                                       boolean isFromMemoryCache, boolean isFirstResource) {
-            //                            return false;
-            //                        }
-            //                    })
-
-
         }
 
         @Override
-        public void onClick(View v) {
-            mListener.onClickImage(mImages.get(getAdapterPosition()));
+        public void onClick(View cardView) {
+            ImageView photo = (ImageView) cardView.findViewById(R.id.item_post_gallery_image);
+            mListener.onClickImage(photo, mImages.get(getAdapterPosition()));
         }
+
+//        @Override
+//        public boolean onTouch(View v, MotionEvent event) {
+//            mListener.onTouch(v,event);
+//            return false;
+//        }
     }
 }
