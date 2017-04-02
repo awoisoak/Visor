@@ -1,0 +1,33 @@
+<FrameLayout style="@style/VisorTheme"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.awoisoak.visor.presentation.photo.PhotoActivity">
+
+
+    <ProgressBar
+        android:id="@+id/photo_activity_progress_bar"
+        style="?android:attr/progressBarPadding"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginBottom="100dp"
+        />
+    <TextView
+        android:id="@+id/photo_activity_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_vertical|center_horizontal"
+        android:layout_marginBottom="100dp"
+        android:text="@string/loading_high_res_image"
+        style="@style/VisorTheme"/>
+
+    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+        android:id="@+id/photo_activity_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+    />
+
+</FrameLayout>

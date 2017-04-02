@@ -146,6 +146,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
 
     @Override
     public void onStart() {
+
     }
 
     @Override

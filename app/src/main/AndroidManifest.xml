@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.awoisoak.visor"
           xmlns:android="http://schemas.android.com/apk/res/android">
+
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:allowBackup="true"
         android:name=".presentation.VisorApplication"
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -32,6 +33,12 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.awoisoak.visor.presentation.postlist.PostsListActivity"/>
+        </activity>
+        <activity
+            android:name=".presentation.photo.PhotoActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_image_fullscreen"
+            android:theme="@style/FullscreenTheme">
         </activity>
     </application>
 

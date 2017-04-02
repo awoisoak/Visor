@@ -155,7 +155,6 @@ public class PostGalleryActivity extends AppCompatActivity
 
     @Override
     public void onClickImage(Image image) {
-        Toast.makeText(this, "image was clicked!", Toast.LENGTH_SHORT).show();
         mPresenter.showImage(image);
     }
 
