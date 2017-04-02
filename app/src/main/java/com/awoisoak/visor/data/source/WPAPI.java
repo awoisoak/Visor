@@ -25,6 +25,6 @@ public interface WPAPI {
      * @return
      */
 
-    void retrieveAllMediaFromPost(String parent, WPListener<MediaFromPostResponse>l);
+    void retrieveAllMediaFromPost(String parent,int offset, WPListener<MediaFromPostResponse>l);
 
 }

@@ -62,8 +62,8 @@ public class WPManager implements WPAPI {
     }
 
     @Override
-    public void retrieveAllMediaFromPost(String parent, WPListener<MediaFromPostResponse> l) {
-        Call<MediaFromPostResponse> c = service.retrieveAllMediaFromPost(parent);
+    public void retrieveAllMediaFromPost(String parent,int offset, WPListener<MediaFromPostResponse> l) {
+        Call<MediaFromPostResponse> c = service.retrieveAllMediaFromPost(parent, offset);
         responseRequest(c, l);
     }
 

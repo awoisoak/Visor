@@ -30,8 +30,15 @@ public interface PostsListView extends IView {
      */
     void showLoadingSnackbar();
 
+
     /**
-     * Hide Snackbar once the posts have been retrieved
+     * Display Error Snackbar to inform the user there was an error and ask if he/she want to retry.
      */
-    void hideLoadingSnackbar();
+    void showErrorSnackbar();
+
+
+    /**
+     * Hide any of the previous Snackbar
+     */
+    void hideSnackbar();
 }

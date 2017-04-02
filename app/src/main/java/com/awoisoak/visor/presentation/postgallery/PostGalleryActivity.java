@@ -1,4 +1,4 @@
-package com.awoisoak.visor.presentation.postlist;
+package com.awoisoak.visor.presentation.postgallery;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,17 +7,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.awoisoak.visor.R;
+import com.awoisoak.visor.data.source.Image;
 import com.awoisoak.visor.data.source.Post;
 import com.awoisoak.visor.presentation.VisorApplication;
-import com.awoisoak.visor.presentation.postlist.dagger.DaggerPostsListComponent;
-import com.awoisoak.visor.presentation.postlist.dagger.PostsListModule;
+import com.awoisoak.visor.presentation.postgallery.dagger.DaggerPostGalleryComponent;
+import com.awoisoak.visor.presentation.postgallery.dagger.PostGalleryModule;
 
 import java.util.List;
 
@@ -26,26 +26,28 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PostsListActivity extends AppCompatActivity
-        implements PostsListView, PostsListAdapter.PostItemClickListener {
-    @BindView(R.id.posts_list_toolbar) Toolbar mToolbar;
-    @BindView(R.id.posts_list_logo) ImageView mLogo;
-    @BindView(R.id.posts_list_recycler) RecyclerView mRecyclerView;
-    @BindView(R.id.post_list_progress_bar) ProgressBar mProgressBar;
+public class PostGalleryActivity extends AppCompatActivity
+        implements PostGalleryView, PostGalleryAdapter.ImageClickListener {
+    private static final String MARKER = PostGalleryActivity.class.getSimpleName();
+
+    public static final String EXTRA_POST_ID = "post_id";
+
+    @BindView(R.id.post_gallery_recycler) RecyclerView mRecyclerView;
+    @BindView(R.id.post_gallery_progress_bar) ProgressBar mProgressBar;
 
     Snackbar mSnackbar;
     @Inject
-    PostsListPresenter mPresenter;
+    PostGalleryPresenter mPresenter;
 
-    PostsListAdapter mAdapter;
-    LinearLayoutManager mLayoutManager;
+    PostGalleryAdapter mAdapter;
+    LinearLayoutManager mLayoutManager; //TODO GridLayout?
+    private String mPostId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_posts_list);
+        setContentView(R.layout.activity_post_gallery);
         ButterKnife.bind(this);
-        mToolbar.setTitle("");
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBar.getIndeterminateDrawable().setColorFilter(0xFFFF0000, android.graphics.PorterDuff.Mode.MULTIPLY);
         mLayoutManager = new LinearLayoutManager(this);
@@ -64,9 +66,18 @@ public class PostsListActivity extends AppCompatActivity
             }
         });
 
-        DaggerPostsListComponent.builder()
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            mPostId = bundle.getString(EXTRA_POST_ID);
+        } else {
+            Log.e(MARKER, "unknown postID!");
+        }
+
+
+        DaggerPostGalleryComponent.builder()
                 .wPAPIComponent(((VisorApplication) getApplication()).getWPAPIComponent())
-                .postsListModule(new PostsListModule(this))
+                .postGalleryModule(new PostGalleryModule(this))
                 .build().inject(this);
         mPresenter.onCreate();
     }
@@ -78,14 +89,14 @@ public class PostsListActivity extends AppCompatActivity
     }
 
     @Override
-    public void bindPostsList(List<Post> posts) {
-        mAdapter = new PostsListAdapter(posts, this, this);
+    public void bindPostGallery(List<Image> image) {
+        mAdapter = new PostGalleryAdapter(image, this, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
-    public void updatePostsList(List<Post> posts) {
-        mAdapter.notifyItemRangeInserted(mAdapter.getItemCount() - posts.size(), posts.size());
+    public void updatePostGallery(List<Image> images) {
+        mAdapter.notifyItemRangeInserted(mAdapter.getItemCount() - images.size(), images.size());
         //        mAdapter.addNewPosts(posts);
     }
 
@@ -93,7 +104,6 @@ public class PostsListActivity extends AppCompatActivity
     public void showLoadingSnackbar() {
         mSnackbar = Snackbar.make(mRecyclerView, getString(R.string.loading_new_posts), Snackbar.LENGTH_INDEFINITE);
         mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
-
         mSnackbar.show();
     }
 
@@ -103,22 +113,28 @@ public class PostsListActivity extends AppCompatActivity
     }
 
     @Override
+    public String getPostId() {
+        return mPostId;
+    }
+
+    @Override
     public void showErrorSnackbar() {
-        mSnackbar = Snackbar.make(mRecyclerView, getString(R.string.loading_new_posts), Snackbar.LENGTH_INDEFINITE).setAction(
-                "Retry", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSnackbar.dismiss();
-                        mPresenter.onRetryPostRequest();
-                    }
-                });
+        mSnackbar = Snackbar.make(mRecyclerView, getString(R.string.loading_new_posts), Snackbar.LENGTH_INDEFINITE)
+                .setAction(
+                        "Retry", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mSnackbar.dismiss();
+                                mPresenter.onRetryPostRequest();
+                            }
+                        });
 
     }
 
     @Override
-    public void onPostItemClick(Post post) {
-        Toast.makeText(this, "post " + post.getTitle() + "was clicked!", Toast.LENGTH_SHORT).show();
-        mPresenter.showPostGallery(post);
+    public void onClickImage(Image image) {
+        Toast.makeText(this, "image was clicked!", Toast.LENGTH_SHORT).show();
+        mPresenter.showImage(image);
     }
 
     @Override
@@ -143,4 +159,6 @@ public class PostsListActivity extends AppCompatActivity
         super.onDestroy();
         mPresenter.onDestroy();
     }
+
+
 }

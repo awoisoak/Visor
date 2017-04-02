@@ -1,16 +1,14 @@
-package com.awoisoak.visor.presentation.postlist;
+package com.awoisoak.visor.presentation.postgallery;
 
 
-import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.awoisoak.visor.data.source.Post;
+import com.awoisoak.visor.data.source.Image;
 import com.awoisoak.visor.data.source.responses.ErrorResponse;
 import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
-import com.awoisoak.visor.domain.interactors.PostsRequestInteractor;
-import com.awoisoak.visor.presentation.postgallery.PostGalleryActivity;
+import com.awoisoak.visor.data.source.responses.MediaFromPostResponse;
+import com.awoisoak.visor.domain.interactors.PostGalleryInteractor;
 import com.awoisoak.visor.signals.SignalManagerFactory;
 import com.awoisoak.visor.threading.ThreadPool;
 import com.squareup.otto.Subscribe;
@@ -20,21 +18,21 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class PostsListPresenterImpl implements PostsListPresenter {
-    public static String MARKER = PostsListPresenterImpl.class.getSimpleName();
+public class PostGalleryPresenterImpl implements PostGalleryPresenter {
+    public static String MARKER = PostGalleryPresenterImpl.class.getSimpleName();
 
 
-    private PostsListView mView;
-    private PostsRequestInteractor mInteractor;
+    private PostGalleryView mView;
+    private PostGalleryInteractor mInteractor;
 
     private boolean mIsPostRequestRunning;
     private boolean mIsFirstRequest = true;
-    private List<Post> mPosts = new ArrayList<>();
+    private List<Image> mImages = new ArrayList<>();
 
     private boolean mAllPostsDownloaded = false;
 
     @Inject
-    public PostsListPresenterImpl(PostsListView view, PostsRequestInteractor interactor) {
+    public PostGalleryPresenterImpl(PostGalleryView view, PostGalleryInteractor interactor) {
         mView = view;
         mInteractor = interactor;
     }
@@ -44,40 +42,37 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     //If we trigger here the requestPosts we need to be registered previously
     public void onCreate() {
         SignalManagerFactory.getSignalManager().register(this);
-        requestNewPosts();
+        requestNewImages();
     }
 
 
     @Override
     public void onRetryPostRequest() {
-        requestNewPosts();
+        requestNewImages();
     }
 
     @Override
     public void onBottomReached() {
-        System.out.println("awoooooo | Presenter | onBottomReached");
+        System.out.println("awoooooo | Gallery Presenter | onBottomReached");
         if (mAllPostsDownloaded) {
             return;
         }
         if (!mIsPostRequestRunning) {
-            requestNewPosts();
+            requestNewImages();
         }
     }
 
     @Override
-    public void showPostGallery(Post post) {
-        Activity activity = mView.getActivity();
-        Intent i = new Intent(activity, PostGalleryActivity.class);
-        i.putExtra(PostGalleryActivity.EXTRA_POST_ID, post.getId());
-        activity.startActivity(i);
+    public void showImage(Image image) {
+        //TODO
     }
 
 
     /**
      * This will request posts in background. The result will be given Bus event in the methods below
      */
-    private void requestNewPosts() {
-        System.out.println("awoooooo | Presenter | requestNewPosts");
+    private void requestNewImages() {
+        System.out.println("awoooooo | Presenter | requestNewImages");
         if (!mIsFirstRequest) {
             mView.showLoadingSnackbar();
         }
@@ -85,7 +80,8 @@ public class PostsListPresenterImpl implements PostsListPresenter {
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
-                mInteractor.getPosts();
+                mInteractor.getImages(mView.getPostId());
+
             }
         });
     }
@@ -96,26 +92,26 @@ public class PostsListPresenterImpl implements PostsListPresenter {
      * @param response
      */
     @Subscribe
-    public void onPostsReceivedEvent(final ListsPostsResponse response) {
+    public void onPostsReceivedEvent(final MediaFromPostResponse response) {
         Log.d(MARKER, "awooo @BUS | onPostsReceived | response | code = " + response.getCode());
 
-        mPosts.addAll(response.getList());
+        mImages.addAll(response.getList());
         ThreadPool.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mView.hideProgressBar();
                 if (mIsFirstRequest) {
                     mIsFirstRequest = false;
-                    mView.bindPostsList(mPosts);
+                    mView.bindPostGallery(mImages);
 
                 } else {
-                    mView.updatePostsList(response.getList());
+                    mView.updatePostGallery(response.getList());
                     mView.hideSnackbar();
                 }
                 mIsPostRequestRunning = false;
             }
         });
-        if (response.getList().size() < mInteractor.MAX_NUMBER_POSTS_RETURNED) {
+        if (response.getList().size() < mInteractor.MAX_NUMBER_IMAGES_RETURNED) {
             mAllPostsDownloaded = true;
         }
     }

@@ -9,17 +9,15 @@ public class Image {
     String thumbnail;
     String square;
     String medium;
-    String medium_large;
     String large;
     String full;
 
 
-    public Image(String thumbnail,String square,String medium, String medium_large,String large,
+    public Image(String thumbnail,String square,String medium, String large,
                   String full) {
         this.thumbnail = thumbnail;
         this.square = square;
         this.medium = medium;
-        this.medium_large = medium_large;
         this.large = large;
         this.full = full;
     }
@@ -34,10 +32,6 @@ public class Image {
 
     public String getMedium() {
         return medium;
-    }
-
-    public String getMedium_large() {
-        return medium_large;
     }
 
     public String getSquare() {

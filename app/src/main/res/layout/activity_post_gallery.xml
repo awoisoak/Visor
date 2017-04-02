@@ -9,7 +9,7 @@
     <!--tools:context="com.awoisoak.visor.presentation.postlist.PostsListActivity"-->
     <!--android:fitsSystemWindows="true"-->
     <ProgressBar
-        android:id="@+id/post_list_progress_bar"
+        android:id="@+id/post_gallery_progress_bar"
         style="?android:attr/progressBarPadding"
         android:layout_width="75dp"
         android:layout_height="75dp"
@@ -20,7 +20,7 @@
 
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/post_list_app_bar_layout"
+        android:id="@+id/post_gallery_app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -34,7 +34,7 @@
 
         </android.support.design.widget.CollapsingToolbarLayout>
         <ImageView
-            android:id="@+id/posts_list_map"
+            android:id="@+id/post_gallery_map"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
@@ -45,46 +45,6 @@
             android:src="@drawable/map_visited_countries"
             />
 
-        <!--app:layout_behavior=""-->
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/posts_list_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            app:layout_anchor="@id/post_list_app_bar_layout"
-            app:layout_collapseMode="pin"
-            app:layout_scrollFlags="scroll">
-
-            <!--<TextView-->
-                <!--android:id="@+id/posts_list_logo2"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:adjustViewBounds="true"-->
-                <!--android:gravity="center_horizontal"-->
-                <!--android:text="Never Stop Travelling"-->
-                <!--android:textSize="30sp"-->
-                <!--/>-->
-
-
-        </android.support.v7.widget.Toolbar>
-
-
-        <ImageView
-            android:id="@+id/posts_list_logo"
-            android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="fill_vertical|center"
-            android:adjustViewBounds="true"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/logo"
-            />
-
-        <!--app:popupTheme="@style/AppTheme.PopupOverlay"-->
-        <!--app:layout_anchor=""-->
-
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
@@ -94,7 +54,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/posts_list_recycler"
+            android:id="@+id/post_gallery_recycler"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"

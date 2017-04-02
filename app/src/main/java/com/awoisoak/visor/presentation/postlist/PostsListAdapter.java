@@ -11,9 +11,6 @@ import android.widget.TextView;
 import com.awoisoak.visor.R;
 import com.awoisoak.visor.data.source.Post;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
@@ -28,7 +25,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
     private Context mContext;
 
     public interface PostItemClickListener {
-        void onPostItemClick(int item);
+        void onPostItemClick(Post post);
     }
 
     public PostsListAdapter(List<Post> posts, PostItemClickListener listener, Context context) {
@@ -40,7 +37,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
     @Override
     public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.item_post, parent, false);
+                R.layout.item_post_list, parent, false);
         return new PostViewHolder(rootView);
     }
 
@@ -60,12 +57,6 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
     }
 
 
-//    public void addNewPosts(List<Post> newPosts) {
-////        mPosts.addAll(newPosts);
-////        notifyItemRangeInserted(getItemCount() - newPosts.size(), newPosts.size());
-////        notifyDataSetChanged();
-//    }
-
     public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.item_post_image) ImageView featuredImage;
         @BindView(R.id.item_post_title) TextView title;
@@ -80,30 +71,32 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             if (post.getFeaturedImage().equals("") || post.getFeaturedImage() == null) {
                 featuredImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.logo));
             }
-            Glide.with(mContext).load(post.getFeaturedImage()).error(R.drawable.hal_9000).listener(
-                    new RequestListener<String, GlideDrawable>() {
-                        @Override
-                        public boolean onException(Exception e, String model, Target<GlideDrawable> target,
-                                                   boolean isFirstResource) {
-                            System.out.println("awoooo | Glider listeber | onException | printing trace...");
-                            e.printStackTrace();
-                            return false;
-                        }
+            Glide.with(mContext).load(post.getFeaturedImage()).error(R.drawable.hal_9000).placeholder(R.drawable.gradient).crossFade(1000).into(featuredImage);
+//            listener(
+//                    new RequestListener<String, GlideDrawable>() {
+//                        @Override
+//                        public boolean onException(Exception e, String model, Target<GlideDrawable> target,
+//                                                   boolean isFirstResource) {
+//                            System.out.println("awoooo | Glider listeber | onException | printing trace...");
+//                            e.printStackTrace();
+//                            return false;
+//                        }
+//
+//                        @Override
+//                        public boolean onResourceReady(GlideDrawable resource, String model,
+//                                                       Target<GlideDrawable> target,
+//                                                       boolean isFromMemoryCache, boolean isFirstResource) {
+//                            return false;
+//                        }
+//                    })
 
-                        @Override
-                        public boolean onResourceReady(GlideDrawable resource, String model,
-                                                       Target<GlideDrawable> target,
-                                                       boolean isFromMemoryCache, boolean isFirstResource) {
-                            return false;
-                        }
-                    })
-                    .placeholder(R.drawable.gradient).crossFade(1000).into(featuredImage);
+
             title.setText(post.getTitle());
         }
 
         @Override
         public void onClick(View v) {
-            mListener.onPostItemClick(getAdapterPosition());
+            mListener.onPostItemClick(mPosts.get(getAdapterPosition()));
         }
     }
 }

@@ -1,10 +1,11 @@
-package com.awoisoak.visor.presentation.postlist;
+package com.awoisoak.visor.presentation.postgallery;
 
+import com.awoisoak.visor.data.source.Image;
 import com.awoisoak.visor.data.source.Post;
 import com.awoisoak.visor.presentation.IPresenter;
 
 
-public interface PostsListPresenter extends IPresenter {
+public interface PostGalleryPresenter extends IPresenter {
 
     /**
      * Called when the user choose to retry a request who had failed
@@ -17,7 +18,7 @@ public interface PostsListPresenter extends IPresenter {
     void onBottomReached();
 
     /**
-     * Called when the user wants to go inside a post gallery
+     * Called when the user wants to get inside an image
      */
-    void showPostGallery(Post post);
+    void showImage(Image image);
 }

@@ -1,21 +1,17 @@
 <resources>
 
-
-
     <style name="VisorTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <!--Check https://gist.github.com/shekibobo/46e2f0b7b7e83f60b500-->
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/black</item>
+        <item name="colorAccent">@color/red</item>
         <item name="android:windowBackground">@color/wallet_background</item>
         <item name="android:textColor">@color/text_color_primary</item>
         <item name="android:buttonStyle">@color/text_color_primary</item>
-        <item name="android:textColorHighlight">@color/blue_clear</item>
+        <item name="android:textColorHighlight">@color/orange</item>
     </style>
 
 

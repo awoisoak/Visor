@@ -1,11 +1,11 @@
 package com.awoisoak.visor.domain.interactors;
 
-public interface PostsRequestInteractor {
+public interface PostGalleryInteractor {
     /**
      * Default value in WP
      * https://developer.wordpress.org/rest-api/reference/posts/#arguments
      */
-    public static int MAX_NUMBER_POSTS_RETURNED = 10;
+    public static int MAX_NUMBER_IMAGES_RETURNED = 10;
 
-    void getPosts();
+    void getImages(String postId);
 }

@@ -32,6 +32,6 @@ public interface WPService {
      */
     //TODO add offset
     @GET("/wp-json/wp/v2/media")
-    Call<MediaFromPostResponse> retrieveAllMediaFromPost(@Query("parent") String parent);
+    Call<MediaFromPostResponse> retrieveAllMediaFromPost(@Query("parent") String parent, @Query("offset") int offset);
 
 }

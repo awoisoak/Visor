@@ -41,12 +41,13 @@ public class WPManagerTests {
 
     @Test
     public void test2_retrieveAllMediaFromPost() throws Exception {
-        WPManager.getInstance().retrieveAllMediaFromPost(mPostId, new WPListener<MediaFromPostResponse>() {
+        WPManager.getInstance().retrieveAllMediaFromPost(mPostId, 0, new WPListener<MediaFromPostResponse>() {
             @Override
             public void onResponse(MediaFromPostResponse response) {
                 assertEquals(response.getCode(), OK_RESPONSE);
                 assertNotNull(response.getList().get(1).getFull());
-                System.out.println("awooooooo | retrieveAllMediaFromPost| full image href"+response.getList().get(1).getFull());
+                System.out.println(
+                        "awooooooo | retrieveAllMediaFromPost| full image href" + response.getList().get(1).getFull());
             }
 
             @Override

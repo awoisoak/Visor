@@ -21,6 +21,15 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".presentation.postgallery.PostGalleryActivity"
+            android:label="@string/title_activity_post_gallery"
+            android:parentActivityName=".presentation.postlist.PostsListActivity"
+            android:theme="@style/VisorTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.awoisoak.visor.presentation.postlist.PostsListActivity"/>
+        </activity>
     </application>
 
 </manifest>
