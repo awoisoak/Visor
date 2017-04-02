@@ -40,8 +40,6 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     }
 
     @Override
-    //TODO check if we register to Otto here or in start
-    //If we trigger here the requestPosts we need to be registered previously
     public void onCreate() {
         SignalManagerFactory.getSignalManager().register(this);
         requestNewPosts();
@@ -149,7 +147,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
 
     @Override
     public void onStart() {
-        //TODO you ahave to register the buss in OnCreate because there u are requesting the posts
+        //TODO you have to register the buss in OnCreate because there u are requesting the posts
         //if in onStop you unsubscribe (to avoid two activities receiving the same onResponseerrorEvent) then you should
         // register it here again (create the flag if needed)
         //        if (!registered){

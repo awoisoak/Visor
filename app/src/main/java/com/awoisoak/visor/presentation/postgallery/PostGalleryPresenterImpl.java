@@ -1,14 +1,16 @@
 package com.awoisoak.visor.presentation.postgallery;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.awoisoak.visor.data.source.Image;
 import com.awoisoak.visor.data.source.responses.ErrorResponse;
-import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
 import com.awoisoak.visor.data.source.responses.MediaFromPostResponse;
 import com.awoisoak.visor.domain.interactors.PostGalleryInteractor;
+import com.awoisoak.visor.presentation.photo.PhotoActivity;
 import com.awoisoak.visor.signals.SignalManagerFactory;
 import com.awoisoak.visor.threading.ThreadPool;
 import com.squareup.otto.Subscribe;
@@ -64,7 +66,10 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     @Override
     public void showImage(Image image) {
-        //TODO
+        Activity activity = mView.getActivity();
+        Intent i = new Intent(activity, PhotoActivity.class);
+        i.putExtra(PhotoActivity.EXTRA_IMAGE, image.getLarge());
+        activity.startActivity(i);
     }
 
 

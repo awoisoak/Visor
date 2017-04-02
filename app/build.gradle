@@ -36,6 +36,7 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
 
+
     //TODO use variables for the versions
 
     compile 'com.android.support:appcompat-v7:' + SUPPORT_LIBRARY_VERSION
@@ -56,14 +57,16 @@ dependencies {
 
     //Glide
     compile 'com.github.bumptech.glide:glide:' + GLIDE_VERSION
-    compile 'com.android.support:support-v4:25.2.0' //really needed by Glide?
+    //really needed by Glide?
 
     //Dagger
     compile group: "com.google.dagger", name: "dagger", version: DAGGER_VERSION
-    provided 'org.glassfish:javax.annotation:10.0-b28'
     apt "com.google.dagger:dagger-compiler:" + DAGGER_VERSION
 
     //Otto
     compile 'com.squareup:otto:' + OTTO_VERSION
 
+
+    compile 'com.android.support:support-v4:25.2.0'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
 }
