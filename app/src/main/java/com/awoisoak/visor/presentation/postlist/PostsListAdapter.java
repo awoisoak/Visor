@@ -71,7 +71,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             if (post.getFeaturedImage().equals("") || post.getFeaturedImage() == null) {
                 featuredImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.logo));
             }
-            Glide.with(mContext).load(post.getFeaturedImage()).error(R.drawable.hal_9000).placeholder(R.drawable.gradient).crossFade(1000).into(featuredImage);
+            Glide.with(mContext).load(post.getFeaturedImage()).error(R.drawable.hal_9000).placeholder(R.drawable.place_holder_black).crossFade(1000).into(featuredImage);
 //            listener(
 //                    new RequestListener<String, GlideDrawable>() {
 //                        @Override

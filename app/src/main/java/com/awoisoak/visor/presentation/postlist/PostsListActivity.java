@@ -112,12 +112,11 @@ public class PostsListActivity extends AppCompatActivity
                         mPresenter.onRetryPostRequest();
                     }
                 });
-
+        mSnackbar.show();
     }
 
     @Override
     public void onPostItemClick(Post post) {
-        Toast.makeText(this, "post " + post.getTitle() + "was clicked!", Toast.LENGTH_SHORT).show();
         mPresenter.showPostGallery(post);
     }
 

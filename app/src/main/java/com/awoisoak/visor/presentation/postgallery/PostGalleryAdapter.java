@@ -69,7 +69,7 @@ public class PostGalleryAdapter extends RecyclerView.Adapter<PostGalleryAdapter.
             if (image.getLarge().equals("") || image.getLarge() == null) {
                 imageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.logo));
             }
-            Glide.with(mContext).load(image.getSquare()).error(R.drawable.hal_9000).placeholder(R.drawable.gradient)
+            Glide.with(mContext).load(image.getSquare()).error(R.drawable.hal_9000).placeholder(R.drawable.place_holder_black)
                     .crossFade(1000).into(imageView);
             //            listener(
             //                    new RequestListener<String, GlideDrawable>() {

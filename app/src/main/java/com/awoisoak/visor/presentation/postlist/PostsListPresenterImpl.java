@@ -43,6 +43,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     //TODO check if we register to Otto here or in start
     //If we trigger here the requestPosts we need to be registered previously
     public void onCreate() {
+        System.out.println("awooooo | postListPresenter | onCreate");
         SignalManagerFactory.getSignalManager().register(this);
         requestNewPosts();
     }
@@ -69,6 +70,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
         Activity activity = mView.getActivity();
         Intent i = new Intent(activity, PostGalleryActivity.class);
         i.putExtra(PostGalleryActivity.EXTRA_POST_ID, post.getId());
+        i.putExtra(PostGalleryActivity.EXTRA_POST_TITLE, post.getTitle());
         activity.startActivity(i);
     }
 

@@ -2,14 +2,20 @@ package com.awoisoak.visor.presentation.postgallery;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.awoisoak.visor.R;
@@ -31,9 +37,13 @@ public class PostGalleryActivity extends AppCompatActivity
     private static final String MARKER = PostGalleryActivity.class.getSimpleName();
 
     public static final String EXTRA_POST_ID = "post_id";
+    public static final String EXTRA_POST_TITLE = "post_title";
 
+    @BindView(R.id.post_gallery_toolbar) Toolbar toolbar;
     @BindView(R.id.post_gallery_recycler) RecyclerView mRecyclerView;
     @BindView(R.id.post_gallery_progress_bar) ProgressBar mProgressBar;
+    @BindView(R.id.posts_gallery_title) TextView mTitle;
+
 
     Snackbar mSnackbar;
     @Inject
@@ -48,6 +58,11 @@ public class PostGalleryActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_gallery);
         ButterKnife.bind(this);
+
+        toolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_white_36dp);
+        setSupportActionBar(toolbar);
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBar.getIndeterminateDrawable().setColorFilter(0xFFFF0000, android.graphics.PorterDuff.Mode.MULTIPLY);
         mLayoutManager = new LinearLayoutManager(this);
@@ -68,12 +83,14 @@ public class PostGalleryActivity extends AppCompatActivity
 
 
         Bundle bundle = getIntent().getExtras();
+        String title = new String();
         if (bundle != null) {
             mPostId = bundle.getString(EXTRA_POST_ID);
+            title = bundle.getString(EXTRA_POST_TITLE);
         } else {
-            Log.e(MARKER, "unknown postID!");
+            Log.e(MARKER, "Bundle passed to PostGalleryActivity is null");
         }
-
+        mTitle.setText(title);
 
         DaggerPostGalleryComponent.builder()
                 .wPAPIComponent(((VisorApplication) getApplication()).getWPAPIComponent())
@@ -128,6 +145,7 @@ public class PostGalleryActivity extends AppCompatActivity
                                 mPresenter.onRetryPostRequest();
                             }
                         });
+        mSnackbar.show();
 
     }
 
@@ -160,5 +178,16 @@ public class PostGalleryActivity extends AppCompatActivity
         mPresenter.onDestroy();
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }
