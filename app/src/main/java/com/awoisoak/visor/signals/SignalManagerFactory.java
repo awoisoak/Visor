@@ -1,5 +1,8 @@
 package com.awoisoak.visor.signals;
 
+/**
+ * Factory for the {@link SignalManager}
+ */
 public class SignalManagerFactory {
     private static SignalManager instance;
 

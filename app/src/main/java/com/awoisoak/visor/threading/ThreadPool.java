@@ -34,32 +34,6 @@ public final class ThreadPool {
     }
 
     /**
-     * Run the {@code Runnable} on the UI main thread, to be run after the specified amount
-     * of time elapses.
-     *
-     * @param runnable    the runnable
-     * @param delayMillis the delay (in milliseconds) until the Runnable will be executed
-     */
-    public static void runOnUiThreadDelayed(Runnable runnable, long delayMillis) {
-        if (sUiThreadHandler == null) {
-            sUiThreadHandler = new Handler(Looper.getMainLooper());
-        }
-        sUiThreadHandler.postDelayed(runnable, delayMillis);
-    }
-
-    /**
-     * Cancels a runnable that should be run in the UI main thread after a delay (scheduled
-     * by {@link #runOnUiThreadDelayed(Runnable, long)})
-     *
-     * @param runnable the runnable to be canceled
-     */
-    public static void cancelRunOnUiThreadDelayed(Runnable runnable) {
-        if (sUiThreadHandler != null) {
-            sUiThreadHandler.removeCallbacks(runnable);
-        }
-    }
-
-    /**
      * Run the {@code Runnable} on a non-UI thread.
      *
      * @param runnable the runnable

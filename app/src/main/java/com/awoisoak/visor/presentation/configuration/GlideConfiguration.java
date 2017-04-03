@@ -8,7 +8,7 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.module.GlideModule;
 
 /**
- * To make sure Glide uses ARGB 8888 to increase the quality
+ * To make sure Glide uses ARGB 8888 in order to increase the image quality
  */
 public class GlideConfiguration implements GlideModule {
     @Override

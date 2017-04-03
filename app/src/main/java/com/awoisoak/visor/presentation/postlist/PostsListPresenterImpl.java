@@ -52,7 +52,6 @@ public class PostsListPresenterImpl implements PostsListPresenter {
 
     @Override
     public void onBottomReached() {
-        Log.d(MARKER, "awoooooo | Presenter | onBottomReached");
         if (mAllPostsDownloaded) {
             return;
         }
@@ -75,7 +74,6 @@ public class PostsListPresenterImpl implements PostsListPresenter {
      * This will request posts in background. The result will be given Bus event in the methods below
      */
     private void requestNewPosts() {
-        Log.d(MARKER, "awoooooo | Presenter | requestNewPosts");
         if (!mIsFirstRequest) {
             mView.showLoadingSnackbar();
         }
@@ -95,7 +93,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
      */
     @Subscribe
     public void onPostsReceivedEvent(final ListsPostsResponse response) {
-        Log.d(MARKER, "awooo @BUS | onPostsReceived | response | code = " + response.getCode());
+        Log.d(MARKER, "@BUS | onPostsReceived | response | code = " + response.getCode());
 
         mView.hideSnackbar();
         mPosts.addAll(response.getList());
@@ -126,7 +124,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
      */
     @Subscribe
     public void onErrorRetrievingPostsEvent(ErrorResponse response) {
-        Log.d(MARKER, "awoo @BUS | onErrorRetrievingPosts | response | code = " + response.getCode());
+        Log.d(MARKER, "@BUS | onErrorRetrievingPosts | response | code = " + response.getCode());
 
         mIsPostRequestRunning = false;
         ThreadPool.runOnUiThread(new Runnable() {

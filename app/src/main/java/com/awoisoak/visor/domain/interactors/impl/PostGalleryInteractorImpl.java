@@ -21,7 +21,6 @@ public class PostGalleryInteractorImpl implements PostGalleryInteractor {
 
     @Override
     public void getImages(String postId) {
-        System.out.println("awoooooo | Triggering getImages | offset =" + mOffset);
         api.retrieveAllMediaFromPost(postId,mOffset, new WPListener<MediaFromPostResponse>() {
             @Override
             public void onResponse(MediaFromPostResponse response) {

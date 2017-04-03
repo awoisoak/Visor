@@ -54,7 +54,7 @@ public class PostGalleryActivity extends AppCompatActivity
     PostGalleryPresenter mPresenter;
 
     PostGalleryAdapter mAdapter;
-    LinearLayoutManager mLayoutManager; //TODO GridLayout?
+    LinearLayoutManager mLayoutManager;
     private String mPostId;
 
     @Override
@@ -119,7 +119,6 @@ public class PostGalleryActivity extends AppCompatActivity
     @Override
     public void updatePostGallery(List<Image> images) {
         mAdapter.notifyItemRangeInserted(mAdapter.getItemCount() - images.size(), images.size());
-        //        mAdapter.addNewPosts(posts);
     }
 
     @Override

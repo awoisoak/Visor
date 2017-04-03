@@ -19,7 +19,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * WordPress Manager to attack to awoisoak.com
+ * WordPress Manager to attack awoisoak.com
  */
 
 public class WPManager implements WPAPI {
@@ -30,9 +30,9 @@ public class WPManager implements WPAPI {
     static int NO_CODE = -1;
     private static WPManager instance;
     Gson gson = new GsonBuilder()
-            .registerTypeAdapter(ListsPostsResponse.class, new ListPostsDeserializer<ListsPostsResponse>()).disableHtmlEscaping()
-            .registerTypeAdapter(MediaFromPostResponse.class,
-                                 new MediaFromPostDeserializer<MediaFromPostResponse>())
+            .registerTypeAdapter(ListsPostsResponse.class, new ListPostsDeserializer<ListsPostsResponse>())
+            .disableHtmlEscaping()
+            .registerTypeAdapter(MediaFromPostResponse.class, new MediaFromPostDeserializer<MediaFromPostResponse>())
             .create();
 
     public static WPManager getInstance() {
@@ -62,7 +62,7 @@ public class WPManager implements WPAPI {
     }
 
     @Override
-    public void retrieveAllMediaFromPost(String parent,int offset, WPListener<MediaFromPostResponse> l) {
+    public void retrieveAllMediaFromPost(String parent, int offset, WPListener<MediaFromPostResponse> l) {
         Call<MediaFromPostResponse> c = service.retrieveAllMediaFromPost(parent, offset);
         responseRequest(c, l);
     }
@@ -74,8 +74,8 @@ public class WPManager implements WPAPI {
             T response = retrofitResponse.body();
             int code = retrofitResponse.code();
             if (retrofitResponse.isSuccessful()) {
-                String totalPages = retrofitResponse.headers().get("X-WP-TotalPages");
-                String totalRecords = retrofitResponse.headers().get("X-WP-Total");
+                String totalPages = retrofitResponse.headers().get(WPService.HEADER_TOTAL_PAGES);
+                String totalRecords = retrofitResponse.headers().get(WPService.HEADER_TOTAL_RECORDS);
                 if (totalPages != null && totalRecords != null) {
                     response.setTotalPages(Integer.parseInt(totalPages));
                     response.setTotalRecords(Integer.parseInt(totalRecords));

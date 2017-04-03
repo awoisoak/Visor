@@ -21,7 +21,6 @@ public class PostsRequestInteractorImpl implements PostsRequestInteractor {
 
     @Override
     public void getPosts() {
-        System.out.println("awoooooo | Triggering getPosts | offset ="+mOffset);
         api.listPosts(mOffset, new WPListener<ListsPostsResponse>() {
             @Override
             public void onResponse(ListsPostsResponse response) {

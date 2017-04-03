@@ -89,7 +89,6 @@ public class PostsListActivity extends AppCompatActivity
     @Override
     public void updatePostsList(List<Post> posts) {
         mAdapter.notifyItemRangeInserted(mAdapter.getItemCount() - posts.size(), posts.size());
-        //        mAdapter.addNewPosts(posts);
     }
 
     @Override

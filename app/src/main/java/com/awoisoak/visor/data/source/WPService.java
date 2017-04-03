@@ -14,6 +14,9 @@ import retrofit2.http.Query;
 public interface WPService {
 
 
+    //HEADERS
+    public static String HEADER_TOTAL_PAGES="X-WP-TotalPages";
+    public static String HEADER_TOTAL_RECORDS="X-WP-Total";
 
     //MEDIA
     public static String MEDIA_DETAILS="media_details";

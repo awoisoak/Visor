@@ -52,7 +52,6 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     @Override
     public void onBottomReached() {
-        Log.d(MARKER, "awoooooo | Gallery Presenter | onBottomReached");
         if (mAllPostsDownloaded) {
             return;
         }
@@ -74,7 +73,6 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
      * This will request posts in background. The result will be given Bus event in the methods below
      */
     private void requestNewImages() {
-        Log.d(MARKER, "awoooooo | Presenter | requestNewImages");
         if (!mIsFirstRequest) {
             mView.showLoadingSnackbar();
         }
@@ -95,7 +93,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
      */
     @Subscribe
     public void onPostsReceivedEvent(final MediaFromPostResponse response) {
-        Log.d(MARKER, "awooo @BUS | onPostsReceived | response | code = " + response.getCode());
+        Log.d(MARKER, "@BUS | onPostsReceived | response | code = " + response.getCode());
 
         mView.hideSnackbar();
         mImages.addAll(response.getList());
@@ -127,7 +125,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
      */
     @Subscribe
     public void onErrorRetrievingPostsEvent(ErrorResponse response) {
-        Log.d(MARKER, "awoo @BUS | onErrorRetrievingPosts | response | code = " + response.getCode());
+        Log.d(MARKER, "@BUS | onErrorRetrievingPosts | response | code = " + response.getCode());
 
         mIsPostRequestRunning = false;
         ThreadPool.runOnUiThread(new Runnable() {

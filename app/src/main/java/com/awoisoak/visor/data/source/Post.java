@@ -5,7 +5,7 @@ package com.awoisoak.visor.data.source;
  */
 
 public class Post {
-    String id; //TODO make it int?
+    String id;
     String title;
     String creationDate;
     String modificationDate;
