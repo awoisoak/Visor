@@ -27,6 +27,7 @@
             android:name=".presentation.postgallery.PostGalleryActivity"
             android:label="@string/title_activity_post_gallery"
             android:parentActivityName=".presentation.postlist.PostsListActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/VisorTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -61,7 +61,7 @@ public class PostGalleryActivity extends AppCompatActivity
 
         toolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_white_36dp);
         setSupportActionBar(toolbar);
-                getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBar.getIndeterminateDrawable().setColorFilter(0xFFFF0000, android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -126,7 +126,9 @@ public class PostGalleryActivity extends AppCompatActivity
 
     @Override
     public void hideSnackbar() {
-        mSnackbar.dismiss();
+        if (mSnackbar != null) {
+            mSnackbar.dismiss();
+        }
     }
 
     @Override
@@ -136,15 +138,17 @@ public class PostGalleryActivity extends AppCompatActivity
 
     @Override
     public void showErrorSnackbar() {
-        mSnackbar = Snackbar.make(mRecyclerView, getString(R.string.loading_new_posts), Snackbar.LENGTH_INDEFINITE)
-                .setAction(
-                        "Retry", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mSnackbar.dismiss();
-                                mPresenter.onRetryPostRequest();
-                            }
-                        });
+        mSnackbar =
+                Snackbar.make(mRecyclerView, getString(R.string.error_downloading_pictures), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(
+                                "Retry", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mSnackbar.dismiss();
+                                        showLoadingSnackbar();
+                                        mPresenter.onRetryPostRequest();
+                                    }
+                                });
         mSnackbar.show();
 
     }

@@ -40,16 +40,40 @@ class MediaFromPostDeserializer<T extends WPResponse>
         JsonElement sizes;
 
         for (JsonElement post : arrayImages) {
-            sizes = post.getAsJsonObject().get("media_details").getAsJsonObject().get("sizes");
-            thumbnail = sizes.getAsJsonObject().get("thumbnail").getAsJsonObject().get("source_url");
-            square = sizes.getAsJsonObject().get("square").getAsJsonObject().get("source_url");
-            smallSize = sizes.getAsJsonObject().get("small-size").getAsJsonObject().get("source_url");
-            postBig = sizes.getAsJsonObject().get("post-big").getAsJsonObject().get("source_url");
-            large = sizes.getAsJsonObject().get("large").getAsJsonObject().get("source_url");
-            full = sizes.getAsJsonObject().get("full").getAsJsonObject().get("source_url");
-            imagesList
-                    .add(new Image(thumbnail.getAsString(), square.getAsString(), smallSize.getAsString(), postBig.getAsString(),
-                                   large.getAsString(), full.getAsString()));
+            int width = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject().get("width").getAsInt();
+            int height = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject().get("height").getAsInt();
+            /**
+             * Filter out the few portrait images available ofr aesthetic purposes
+             */
+            if (width > height) {
+                sizes = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject().get(WPService.SIZES);
+                thumbnail = sizes.getAsJsonObject().get(WPService.THUMBNAIL_SIZE).getAsJsonObject()
+                        .get(WPService.SOURCE_URL);
+                square = sizes.getAsJsonObject().get(WPService.SQUARE_SIZE).getAsJsonObject().get(WPService.SOURCE_URL);
+                smallSize =
+                        sizes.getAsJsonObject().get(WPService.SMALL_SIZE).getAsJsonObject().get(WPService.SOURCE_URL);
+                full = sizes.getAsJsonObject().get(WPService.FULL_SIZE).getAsJsonObject().get(WPService.SOURCE_URL);
+
+                /**
+                 * large won't be included if it's not available if the image is too small.
+                 * In that case we fallback to full size
+                 */
+                large = sizes.getAsJsonObject().get(WPService.LARGE_SIZE);
+                large = large != null ? large.getAsJsonObject().get(WPService.SOURCE_URL) : full;
+
+                /**
+                 * post-big is one of the new sizes supported by WP. Some pictures might not included it so
+                 * if that's the case, we fallback to large
+                 * https://make.wordpress.org/core/2015/11/10/responsive-images-in-wordpress-4-4/
+                 */
+                postBig = sizes.getAsJsonObject().get(WPService.POST_BIG_SIZE);
+                postBig = postBig != null ? postBig.getAsJsonObject().get(WPService.SOURCE_URL) : large;
+
+                imagesList
+                        .add(new Image(thumbnail.getAsString(), square.getAsString(), smallSize.getAsString(),
+                                       postBig.getAsString(),
+                                       large.getAsString(), full.getAsString()));
+            }
         }
         MediaFromPostResponse r = new MediaFromPostResponse(imagesList);
         return r;

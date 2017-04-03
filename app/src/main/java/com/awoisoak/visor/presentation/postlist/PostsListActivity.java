@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.awoisoak.visor.R;
 import com.awoisoak.visor.data.source.Post;
@@ -99,16 +98,19 @@ public class PostsListActivity extends AppCompatActivity
 
     @Override
     public void hideSnackbar() {
-        mSnackbar.dismiss();
+        if (mSnackbar!= null) {
+            mSnackbar.dismiss();
+        }
     }
 
     @Override
     public void showErrorSnackbar() {
-        mSnackbar = Snackbar.make(mRecyclerView, getString(R.string.loading_new_posts), Snackbar.LENGTH_INDEFINITE).setAction(
+        mSnackbar = Snackbar.make(mRecyclerView, R.string.error_downloading_posts, Snackbar.LENGTH_INDEFINITE).setAction(
                 "Retry", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mSnackbar.dismiss();
+                        showLoadingSnackbar();
                         mPresenter.onRetryPostRequest();
                     }
                 });

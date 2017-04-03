@@ -2,11 +2,9 @@ package com.awoisoak.visor.presentation.postgallery;
 
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.awoisoak.visor.data.source.Image;
 import com.awoisoak.visor.data.source.responses.ErrorResponse;
-import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
 import com.awoisoak.visor.data.source.responses.MediaFromPostResponse;
 import com.awoisoak.visor.domain.interactors.PostGalleryInteractor;
 import com.awoisoak.visor.signals.SignalManagerFactory;
@@ -38,8 +36,6 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
     }
 
     @Override
-    //TODO check if we register to Otto here or in start
-    //If we trigger here the requestPosts we need to be registered previously
     public void onCreate() {
         SignalManagerFactory.getSignalManager().register(this);
         requestNewImages();
@@ -53,7 +49,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     @Override
     public void onBottomReached() {
-        System.out.println("awoooooo | Gallery Presenter | onBottomReached");
+        Log.d(MARKER, "awoooooo | Gallery Presenter | onBottomReached");
         if (mAllPostsDownloaded) {
             return;
         }
@@ -72,7 +68,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
      * This will request posts in background. The result will be given Bus event in the methods below
      */
     private void requestNewImages() {
-        System.out.println("awoooooo | Presenter | requestNewImages");
+        Log.d(MARKER, "awoooooo | Presenter | requestNewImages");
         if (!mIsFirstRequest) {
             mView.showLoadingSnackbar();
         }
@@ -95,6 +91,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
     public void onPostsReceivedEvent(final MediaFromPostResponse response) {
         Log.d(MARKER, "awooo @BUS | onPostsReceived | response | code = " + response.getCode());
 
+        mView.hideSnackbar();
         mImages.addAll(response.getList());
         ThreadPool.runOnUiThread(new Runnable() {
             @Override
@@ -129,10 +126,8 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
         ThreadPool.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //TODO create this methods in View to hide progress bar & display error snackbar
                 mView.hideProgressBar();
                 mView.showErrorSnackbar();
-                Toast.makeText(mView.getActivity(), "Error receiving the Posts", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -145,17 +140,10 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     @Override
     public void onStart() {
-        //TODO you ahave to register the buss in OnCreate because there u are requesting the posts
-        //if in onStop you unsubscribe (to avoid two activities receiving the same onResponseerrorEvent) then you should
-        // register it here again (create the flag if needed)
-        //        if (!registered){
-        //            SignalManagerFactory.getSignalManager().register(this);
-        //        }
     }
 
     @Override
     public void onStop() {
-        System.out.println("awoooooo | Presenter | onStop");
     }
 
     @Override

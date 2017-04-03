@@ -1,7 +1,10 @@
 package com.awoisoak.visor.presentation.postgallery;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +13,17 @@ import android.widget.ImageView;
 import com.awoisoak.visor.R;
 import com.awoisoak.visor.data.source.Image;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.R.attr.bitmap;
 
 
 public class PostGalleryAdapter extends RecyclerView.Adapter<PostGalleryAdapter.PostViewHolder> {
@@ -65,31 +74,14 @@ public class PostGalleryAdapter extends RecyclerView.Adapter<PostGalleryAdapter.
             itemView.setOnClickListener(this);
         }
 
-        public void bindPost(Image image) {
+        public void bindPost(final Image image) {
             if (image.getPostBig().equals("") || image.getPostBig() == null) {
                 imageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.logo));
             }
-            Glide.with(mContext).load(image.getLarge()).fitCenter()/*.centerCrop()*/.error(R.drawable.hal_9000).placeholder(R.drawable.place_holder_black)
+            Glide.with(mContext).load(image.getPostBig())
+                    .thumbnail(Glide.with(mContext).load(image.getSmallSize()))
+                    .fitCenter().error(R.drawable.hal_9000).placeholder(R.drawable.place_holder_black)
                     .crossFade(1000).into(imageView);
-            //            listener(
-            //                    new RequestListener<String, GlideDrawable>() {
-            //                        @Override
-            //                        public boolean onException(Exception e, String model, Target<GlideDrawable> target,
-            //                                                   boolean isFirstResource) {
-            //                            System.out.println("awoooo | Glider listeber | onException | printing trace...");
-            //                            e.printStackTrace();
-            //                            return false;
-            //                        }
-            //
-            //                        @Override
-            //                        public boolean onResourceReady(GlideDrawable resource, String model,
-            //                                                       Target<GlideDrawable> target,
-            //                                                       boolean isFromMemoryCache, boolean isFirstResource) {
-            //                            return false;
-            //                        }
-            //                    })
-
-
         }
 
         @Override

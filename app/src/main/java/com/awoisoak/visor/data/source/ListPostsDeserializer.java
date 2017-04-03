@@ -26,10 +26,6 @@ class ListPostsDeserializer<T extends WPResponse> implements JsonDeserializer<Li
 
 
     /**
-     * medium_large (768px) is not always available:
-     * https://make.wordpress.org/core/2015/11/10/responsive-images-in-wordpress-4-4/
-     * So we better go for post-Big by now (840px)
-     *
      * @param je
      * @param type
      * @param jdc
@@ -52,21 +48,43 @@ class ListPostsDeserializer<T extends WPResponse> implements JsonDeserializer<Li
         JsonElement links;
 
         for (JsonElement post : arrayOfPosts) {
-            id = post.getAsJsonObject().get("id");
-            creationDate = post.getAsJsonObject().get("date");
-            modificationDate = post.getAsJsonObject().get("modified");
-            title = post.getAsJsonObject().get("title").getAsJsonObject().get("rendered");
-            links = post.getAsJsonObject().get("_links");
-            images = links.getAsJsonObject().get("wp:attachment").getAsJsonArray().get(0).getAsJsonObject().get("href");
-            featuredMedia =
-                    post.getAsJsonObject().get("_embedded").getAsJsonObject().get("wp:featuredmedia").getAsJsonArray()
-                            .get(0).getAsJsonObject().get("media_details").getAsJsonObject()
-                            .get("sizes").getAsJsonObject().get("small-size").getAsJsonObject().get("source_url");
+            id = post.getAsJsonObject().get(WPService.ID);
+            creationDate = post.getAsJsonObject().get(WPService.DATE);
+            modificationDate = post.getAsJsonObject().get(WPService.MODIFIED);
+            title = post.getAsJsonObject().get(WPService.TITLE).getAsJsonObject().get(WPService.RENDERED);
+            links = post.getAsJsonObject().get(WPService.LINKS);
+            images = links.getAsJsonObject().get(WPService.WP_ATTACHMENT).getAsJsonArray().get(0).getAsJsonObject()
+                    .get(WPService.HREF);
+            featuredMedia = post.getAsJsonObject().get(WPService.EMBEDDED).getAsJsonObject()
+                    .get(WPService.WP_FEATURED_MEDIA)
+                    .getAsJsonArray()
+                    .get(0).getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject()
+                    .get(WPService.SIZES).getAsJsonObject().get(WPService.POST_BIG_SIZE);
+            /**
+             * post-big is one of the new sizes supported by WP. Some pictures might not included so
+             * ,if that's the case, we fallback to large
+             * Large will always be included for featuredImages
+             * However, in {@link MediaFromPostDeserializer } we must ensure we fallback to 'full' as some
+             * post images might not include large
+             *
+             * https://make.wordpress.org/core/2015/11/10/responsive-images-in-wordpress-4-4/
+             */
+            if (featuredMedia != null) {
+                featuredMedia = featuredMedia.getAsJsonObject().get(WPService.SOURCE_URL);
+            } else {
+                featuredMedia = post.getAsJsonObject().get(WPService.EMBEDDED).getAsJsonObject()
+                        .get(WPService.WP_FEATURED_MEDIA)
+                        .getAsJsonArray()
+                        .get(0).getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject()
+                        .get(WPService.SIZES).getAsJsonObject().get(WPService.LARGE_SIZE).getAsJsonObject()
+                        .get(WPService.SOURCE_URL);
+            }
 
-            postsList
-                    .add(new Post(id.toString(), creationDate.getAsString(), modificationDate.getAsString(), title.getAsString(),
-                                  featuredMedia.getAsString(),
-                                  images.getAsString()));
+
+            postsList.add(new Post(id.toString(), creationDate.getAsString(), modificationDate.getAsString(),
+                                   title.getAsString(),
+                                   featuredMedia.getAsString(),
+                                   images.getAsString()));
         }
         ListsPostsResponse r = new ListsPostsResponse(postsList);
         return r;

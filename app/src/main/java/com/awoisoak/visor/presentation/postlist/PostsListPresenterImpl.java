@@ -4,7 +4,6 @@ package com.awoisoak.visor.presentation.postlist;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.awoisoak.visor.data.source.Post;
 import com.awoisoak.visor.data.source.responses.ErrorResponse;
@@ -40,10 +39,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     }
 
     @Override
-    //TODO check if we register to Otto here or in start
-    //If we trigger here the requestPosts we need to be registered previously
     public void onCreate() {
-        System.out.println("awooooo | postListPresenter | onCreate");
         SignalManagerFactory.getSignalManager().register(this);
         requestNewPosts();
     }
@@ -56,7 +52,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
 
     @Override
     public void onBottomReached() {
-        System.out.println("awoooooo | Presenter | onBottomReached");
+        Log.d(MARKER, "awoooooo | Presenter | onBottomReached");
         if (mAllPostsDownloaded) {
             return;
         }
@@ -79,7 +75,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
      * This will request posts in background. The result will be given Bus event in the methods below
      */
     private void requestNewPosts() {
-        System.out.println("awoooooo | Presenter | requestNewPosts");
+        Log.d(MARKER, "awoooooo | Presenter | requestNewPosts");
         if (!mIsFirstRequest) {
             mView.showLoadingSnackbar();
         }
@@ -101,6 +97,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     public void onPostsReceivedEvent(final ListsPostsResponse response) {
         Log.d(MARKER, "awooo @BUS | onPostsReceived | response | code = " + response.getCode());
 
+        mView.hideSnackbar();
         mPosts.addAll(response.getList());
         ThreadPool.runOnUiThread(new Runnable() {
             @Override
@@ -135,10 +132,8 @@ public class PostsListPresenterImpl implements PostsListPresenter {
         ThreadPool.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //TODO create this methods in View to hide progress bar & display error snackbar
                 mView.hideProgressBar();
                 mView.showErrorSnackbar();
-                Toast.makeText(mView.getActivity(), "Error receiving the Posts", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -151,17 +146,10 @@ public class PostsListPresenterImpl implements PostsListPresenter {
 
     @Override
     public void onStart() {
-        //TODO you ahave to register the buss in OnCreate because there u are requesting the posts
-        //if in onStop you unsubscribe (to avoid two activities receiving the same onResponseerrorEvent) then you should
-        // register it here again (create the flag if needed)
-        //        if (!registered){
-        //            SignalManagerFactory.getSignalManager().register(this);
-        //        }
     }
 
     @Override
     public void onStop() {
-        System.out.println("awoooooo | Presenter | onStop");
     }
 
     @Override
