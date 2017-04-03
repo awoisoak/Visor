@@ -19,8 +19,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
+ * Activity to display a picture in high-res
+ * (Pretty simple logic, not worth to apply MVP)
+ *
  */
 public class PhotoActivity extends AppCompatActivity {
     private static final String MARKER = PhotoActivity.class.getSimpleName();
@@ -35,7 +36,6 @@ public class PhotoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //TODO apply ButtKnife to all views
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_fullscreen);
 

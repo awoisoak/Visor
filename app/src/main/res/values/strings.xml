@@ -3,8 +3,11 @@
     <string name="action_settings">Settings</string>
     <string name="loading_new_posts">Loading new posts…</string>
     <string name="loading_high_res_image">Loading high-res photo…</string>
+    <string name="loading_gallery">Loading the photo gallery…</string>
+    <string name="loading_posts">Loading the last entries…</string>
     <string name="title_activity_post_gallery">Gallery</string>
     <string name="error_downloading_posts">Couldn\'t download the posts</string>
     <string name="error_downloading_pictures">Couldn\'t download the pictures</string>
     <string name="title_activity_image_fullscreen">ImageFullscreenActivity</string>
+    <string name="click_to_display_high_res">Click on a picture to display it in High-res</string>
 </resources>

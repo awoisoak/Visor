@@ -46,4 +46,9 @@ public interface PostGalleryView extends IView {
      * returns the postId of this gallery
      */
     String getPostId();
+
+    /**
+     * Display welcome snackbar
+     */
+    void showWelcomeSnackbar();
 }

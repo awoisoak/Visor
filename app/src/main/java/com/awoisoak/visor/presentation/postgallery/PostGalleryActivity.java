@@ -25,6 +25,8 @@ import com.awoisoak.visor.presentation.VisorApplication;
 import com.awoisoak.visor.presentation.postgallery.dagger.DaggerPostGalleryComponent;
 import com.awoisoak.visor.presentation.postgallery.dagger.PostGalleryModule;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,6 +44,8 @@ public class PostGalleryActivity extends AppCompatActivity
     @BindView(R.id.post_gallery_toolbar) Toolbar toolbar;
     @BindView(R.id.post_gallery_recycler) RecyclerView mRecyclerView;
     @BindView(R.id.post_gallery_progress_bar) ProgressBar mProgressBar;
+    @BindView(R.id.post_gallery_text_view) TextView mLoadingText;
+
     @BindView(R.id.posts_gallery_title) TextView mTitle;
 
 
@@ -103,6 +107,7 @@ public class PostGalleryActivity extends AppCompatActivity
     @Override
     public void hideProgressBar() {
         mProgressBar.setVisibility(View.GONE);
+        mLoadingText.setVisibility(View.GONE);
     }
 
     @Override
@@ -134,6 +139,11 @@ public class PostGalleryActivity extends AppCompatActivity
     @Override
     public String getPostId() {
         return mPostId;
+    }
+
+    @Override
+    public void showWelcomeSnackbar() {
+        Snackbar.make(mRecyclerView, R.string.click_to_display_high_res, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

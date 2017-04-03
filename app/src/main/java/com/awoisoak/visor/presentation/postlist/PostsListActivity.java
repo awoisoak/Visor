@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.awoisoak.visor.R;
 import com.awoisoak.visor.data.source.Post;
@@ -31,6 +32,8 @@ public class PostsListActivity extends AppCompatActivity
     @BindView(R.id.posts_list_logo) ImageView mLogo;
     @BindView(R.id.posts_list_recycler) RecyclerView mRecyclerView;
     @BindView(R.id.post_list_progress_bar) ProgressBar mProgressBar;
+    @BindView(R.id.post_list_text_view) TextView mLoadingText;
+
 
     Snackbar mSnackbar;
     @Inject
@@ -74,6 +77,7 @@ public class PostsListActivity extends AppCompatActivity
     @Override
     public void hideProgressBar() {
         mProgressBar.setVisibility(View.GONE);
+        mLoadingText.setVisibility(View.GONE);
     }
 
     @Override

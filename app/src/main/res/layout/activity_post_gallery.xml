@@ -12,10 +12,17 @@
         style="?android:attr/progressBarPadding"
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:layout_gravity="bottom"
+        android:layout_gravity="center_vertical|center_horizontal"
         android:layout_marginBottom="100dp"
         />
-
+    <TextView
+        android:id="@+id/post_gallery_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_vertical|center_horizontal"
+        android:layout_marginBottom="100dp"
+        android:text="@string/loading_gallery"
+        style="@style/VisorTheme"/>
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/post_gallery_app_bar_layout"

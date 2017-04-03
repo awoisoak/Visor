@@ -104,6 +104,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
             public void run() {
                 mView.hideProgressBar();
                 if (mIsFirstRequest) {
+                    mView.showWelcomeSnackbar();
                     mIsFirstRequest = false;
                     mView.bindPostGallery(mImages);
 
