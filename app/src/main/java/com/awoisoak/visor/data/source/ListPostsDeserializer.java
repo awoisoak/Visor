@@ -44,11 +44,15 @@ class ListPostsDeserializer<T extends WPResponse> implements JsonDeserializer<Li
         JsonElement modificationDate;
         JsonElement title;
         JsonElement featuredMedia;
+        JsonElement featuredMediaSmall;
         JsonElement images;
         JsonElement links;
 
+
+
         for (JsonElement post : arrayOfPosts) {
             id = post.getAsJsonObject().get(WPService.ID);
+
             creationDate = post.getAsJsonObject().get(WPService.DATE);
             modificationDate = post.getAsJsonObject().get(WPService.MODIFIED);
             title = post.getAsJsonObject().get(WPService.TITLE).getAsJsonObject().get(WPService.RENDERED);
@@ -81,9 +85,16 @@ class ListPostsDeserializer<T extends WPResponse> implements JsonDeserializer<Li
             }
 
 
+            featuredMediaSmall = post.getAsJsonObject().get(WPService.EMBEDDED).getAsJsonObject()
+                    .get(WPService.WP_FEATURED_MEDIA)
+                    .getAsJsonArray()
+                    .get(0).getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject()
+                    .get(WPService.SIZES).getAsJsonObject().get(WPService.SMALL_SIZE).getAsJsonObject()
+                    .get(WPService.SOURCE_URL);
+
             postsList.add(new Post(id.toString(), creationDate.getAsString(), modificationDate.getAsString(),
                                    title.getAsString(),
-                                   featuredMedia.getAsString(),
+                                   featuredMedia.getAsString(),featuredMediaSmall.getAsString(),
                                    images.getAsString()));
         }
         ListsPostsResponse r = new ListsPostsResponse(postsList);

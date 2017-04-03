@@ -10,6 +10,7 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Specific Deserializer for MediaFromPostResponse
@@ -28,9 +29,8 @@ class MediaFromPostDeserializer<T extends WPResponse>
     @Override
     public MediaFromPostResponse deserialize(JsonElement je, Type type, JsonDeserializationContext jdc)
             throws JsonParseException {
-
+        List<Image> imagesList = new ArrayList<Image>();
         JsonArray arrayImages = je.getAsJsonArray();
-        ArrayList<Image> imagesList = new ArrayList<Image>();
         JsonElement thumbnail;
         JsonElement square;
         JsonElement smallSize;
@@ -38,6 +38,11 @@ class MediaFromPostDeserializer<T extends WPResponse>
         JsonElement large;
         JsonElement full;
         JsonElement sizes;
+
+
+        if (je.toString().equals("[]")) {
+            imagesList = checkBusan();
+        }
 
         for (JsonElement post : arrayImages) {
             int width = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject().get("width").getAsInt();
@@ -78,4 +83,105 @@ class MediaFromPostDeserializer<T extends WPResponse>
         MediaFromPostResponse r = new MediaFromPostResponse(imagesList);
         return r;
     }
+
+    /**
+     * Busan post is affected by an known WordPress issue
+     * https://github.com/WP-API/WP-API/issues/2600
+     * This method is an ugly workaround as the solution should be done in the website re-uploading all Busan pics
+     */
+    private List<Image> checkBusan() {
+        List<Image> busanImageList = new ArrayList<Image>();
+        Image busan1 =
+                new Image("http://awoisoak.com/wp-content/uploads/2015/11/dsc06532_lzn_wm.resized-150x150.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06532_lzn_wm.resized-400x400.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06532_lzn_wm.resized-400x225.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06532_lzn_wm.resized-840x473.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06532_lzn_wm.resized-1024x577.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06532_lzn_wm.resized.jpg");
+
+        Image busan2 =
+                new Image("http://awoisoak.com/wp-content/uploads/2015/11/dsc06558_lzn_wm.resized-150x150.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06558_lzn_wm.resized-400x400.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06558_lzn_wm.resized-400x225.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06558_lzn_wm.resized-840x473.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06558_lzn_wm.resized-1024x577.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06558_lzn_wm.resized.jpg");
+
+
+        Image busan3 =
+                new Image("http://awoisoak.com/wp-content/uploads/2015/11/dsc06652_lzn_wm.resized-150x150.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06652_lzn_wm.resized-400x400.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06652_lzn_wm.resized-400x225.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06652_lzn_wm.resized-840x473.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06652_lzn_wm.resized-1024x577.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06652_lzn_wm.resized.jpg");
+
+
+        Image busan4 =
+                new Image("http://awoisoak.com/wp-content/uploads/2015/11/dsc06669_lzn_wm.resized-150x150.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06669_lzn_wm.resized-400x400.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06669_lzn_wm.resized-400x225.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06669_lzn_wm.resized-840x473.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06669_lzn_wm.resized-1024x577.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06669_lzn_wm.resized.jpg");
+
+
+        Image busan5 =
+                new Image("http://awoisoak.com/wp-content/uploads/2015/11/dsc06692_lzn_wm.resized-150x150.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06692_lzn_wm.resized-400x400.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06692_lzn_wm.resized-400x225.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06692_lzn_wm.resized-840x473.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06692_lzn_wm.resized-1024x577.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06692_lzn_wm.resized.jpg");
+
+
+        Image busan6 =
+                new Image("http://awoisoak.com/wp-content/uploads/2015/11/dsc06704_lzn_wm.resized-150x150.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06704_lzn_wm.resized-400x400.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06704_lzn_wm.resized-400x225.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06704_lzn_wm.resized-840x473.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06704_lzn_wm.resized-1024x577.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06704_lzn_wm.resized.jpg");
+
+
+        Image busan7 =
+                new Image("http://awoisoak.com/wp-content/uploads/2015/11/dsc06827_lzn_wm.resized-150x150.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06827_lzn_wm.resized-400x400.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06827_lzn_wm.resized-400x234.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06827_lzn_wm.resized-840x491.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06827_lzn_wm.resized-1024x599.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06827_lzn_wm.resized.jpg");
+
+
+        Image busan8 =
+                new Image("http://awoisoak.com/wp-content/uploads/2015/11/dsc06832_lzn_wm.resized-150x150.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06832_lzn_wm.resized-400x400.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06832_lzn_wm.resized-400x212.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06832_lzn_wm.resized-840x445.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06832_lzn_wm.resized-1024x543.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06832_lzn_wm.resized.jpg");
+
+
+        Image busan9 =
+                new Image("http://awoisoak.com/wp-content/uploads/2015/11/dsc06834_lzn_wm.resized-150x150.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06834_lzn_wm.resized-400x400.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06834_lzn_wm.resized-400x225.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06834_lzn_wm.resized-840x473.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06834_lzn_wm.resized-1024x577.jpg",
+                          "http://awoisoak.com/wp-content/uploads/2015/11/dsc06834_lzn_wm.resized.jpg");
+
+
+        busanImageList.add(busan1);
+        busanImageList.add(busan2);
+        busanImageList.add(busan3);
+        busanImageList.add(busan4);
+        busanImageList.add(busan5);
+        busanImageList.add(busan6);
+        busanImageList.add(busan7);
+        busanImageList.add(busan8);
+        busanImageList.add(busan9);
+        return busanImageList;
+    }
 }
+
+

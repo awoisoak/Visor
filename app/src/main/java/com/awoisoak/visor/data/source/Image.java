@@ -5,12 +5,29 @@ package com.awoisoak.visor.data.source;
  */
 
 public class Image {
-
+    /**
+     * ~150x150
+     */
     String thumbnail;
+    /**
+     * ~400x400
+     */
     String square;
+    /**
+     * ~400x267
+     */
     String smallSize;
+    /**
+     * ~840x561
+     */
     String postBig;
+    /**
+     * ~1024x684
+     */
     String large;
+    /**
+     * ~2048x1368
+     */
     String full;
 
 
@@ -20,7 +37,6 @@ public class Image {
         this.square = square;
         this.smallSize = smallSize;
         this.postBig = postBig;
-
         this.large = large;
         this.full = full;
     }

@@ -71,25 +71,11 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             if (post.getFeaturedImage().equals("") || post.getFeaturedImage() == null) {
                 featuredImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.logo));
             }
-            Glide.with(mContext).load(post.getFeaturedImage()).error(R.drawable.hal_9000).placeholder(R.drawable.place_holder_black).crossFade(1000).into(featuredImage);
-//            listener(
-//                    new RequestListener<String, GlideDrawable>() {
-//                        @Override
-//                        public boolean onException(Exception e, String model, Target<GlideDrawable> target,
-//                                                   boolean isFirstResource) {
-//                            System.out.println("awoooo | Glider listeber | onException | printing trace...");
-//                            e.printStackTrace();
-//                            return false;
-//                        }
-//
-//                        @Override
-//                        public boolean onResourceReady(GlideDrawable resource, String model,
-//                                                       Target<GlideDrawable> target,
-//                                                       boolean isFromMemoryCache, boolean isFirstResource) {
-//                            return false;
-//                        }
-//                    })
 
+            Glide.with(mContext).load(post.getFeaturedImage())
+                    .thumbnail(Glide.with(mContext).load(post.getFeaturedImageSmall())).dontAnimate()
+                    .fitCenter().error(R.drawable.hal_9000).placeholder(R.drawable.place_holder_black)
+                    .crossFade(1000).into(featuredImage);
 
             title.setText(post.getTitle());
         }

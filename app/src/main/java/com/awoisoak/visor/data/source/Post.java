@@ -9,17 +9,22 @@ public class Post {
     String title;
     String creationDate;
     String modificationDate;
-    String featuredImage; //Medium size image (approx 200x204)
+    String featuredImage;
+
+
+
+    String featuredImageSmall;
     String wpAttachment;
 
 
-    public Post(String id, String date, String modificationDate, String title, String wpFeaturedMedia,
+    public Post(String id, String date, String modificationDate, String title, String wpFeaturedMedia,String wpFeaturedMediaSmall,
                 String wpAttachment) {
         this.id = id;
         this.creationDate = date;
         this.modificationDate = modificationDate;
         this.title = title;
         this.featuredImage = wpFeaturedMedia;
+        this.featuredImageSmall = wpFeaturedMediaSmall;
         this.wpAttachment = wpAttachment;
     }
 
@@ -43,7 +48,18 @@ public class Post {
         return wpAttachment;
     }
 
+    /**
+     * Features image with size {@link Image#postBig} or {@link Image#large}' size
+     * @return
+     */
     public String getFeaturedImage() {
         return featuredImage;
+    }
+    /**
+     * Features image with {@link Image#smallSize} size
+     * @return
+     */
+    public String getFeaturedImageSmall() {
+        return featuredImageSmall;
     }
 }
