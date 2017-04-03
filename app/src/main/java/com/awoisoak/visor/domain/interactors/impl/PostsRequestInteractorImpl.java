@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 public class PostsRequestInteractorImpl implements PostsRequestInteractor {
 
-    private int mOffset;
     private WPAPI api;
 
     @Inject
@@ -20,12 +19,11 @@ public class PostsRequestInteractorImpl implements PostsRequestInteractor {
     }
 
     @Override
-    public void getPosts() {
-        api.listPosts(mOffset, new WPListener<ListsPostsResponse>() {
+    public void getPosts(int offset) {
+        api.listPosts(offset, new WPListener<ListsPostsResponse>() {
             @Override
             public void onResponse(ListsPostsResponse response) {
                 SignalManagerFactory.getSignalManager().postEvent(response);
-                increaseOffset();
             }
 
             @Override
@@ -35,7 +33,4 @@ public class PostsRequestInteractorImpl implements PostsRequestInteractor {
         });
     }
 
-    public void increaseOffset() {
-        mOffset += MAX_NUMBER_POSTS_RETURNED;
-    }
 }

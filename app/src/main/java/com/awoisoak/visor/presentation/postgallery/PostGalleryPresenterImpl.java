@@ -26,11 +26,12 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
     private PostGalleryView mView;
     private PostGalleryInteractor mInteractor;
 
-    private boolean mIsPostRequestRunning;
+    private boolean mIsGalleryRequestRunning;
     private boolean mIsFirstRequest = true;
     private List<Image> mImages = new ArrayList<>();
 
-    private boolean mAllPostsDownloaded = false;
+    private boolean mAllImagesDownloaded = false;
+    private int mOffset;
 
     @Inject
     public PostGalleryPresenterImpl(PostGalleryView view, PostGalleryInteractor interactor) {
@@ -52,10 +53,10 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     @Override
     public void onBottomReached() {
-        if (mAllPostsDownloaded) {
+        if (mAllImagesDownloaded) {
             return;
         }
-        if (!mIsPostRequestRunning) {
+        if (!mIsGalleryRequestRunning) {
             requestNewImages();
         }
     }
@@ -76,11 +77,11 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
         if (!mIsFirstRequest) {
             mView.showLoadingSnackbar();
         }
-        mIsPostRequestRunning = true;
+        mIsGalleryRequestRunning = true;
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
-                mInteractor.getImages(mView.getPostId());
+                mInteractor.getImages(mView.getPostId(), mOffset);
 
             }
         });
@@ -94,7 +95,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
     @Subscribe
     public void onPostsReceivedEvent(final MediaFromPostResponse response) {
         Log.d(MARKER, "@BUS | onPostsReceived | response | code = " + response.getCode());
-
+        increaseOffset();
         mView.hideSnackbar();
         mImages.addAll(response.getList());
         ThreadPool.runOnUiThread(new Runnable() {
@@ -110,13 +111,19 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
                     mView.updatePostGallery(response.getList());
                     mView.hideSnackbar();
                 }
-                mIsPostRequestRunning = false;
+                mIsGalleryRequestRunning = false;
             }
         });
-        if (response.getList().size() < mInteractor.MAX_NUMBER_IMAGES_RETURNED) {
-            mAllPostsDownloaded = true;
+        if (mOffset >= response.getTotalRecords()) {
+            mAllImagesDownloaded = true;
         }
+
     }
+
+    public void increaseOffset() {
+        mOffset += mInteractor.MAX_NUMBER_IMAGES_RETURNED;
+    }
+
 
     /**
      * This method will be called when the interactor returns an error trying to get the new posts
@@ -127,7 +134,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
     public void onErrorRetrievingPostsEvent(ErrorResponse response) {
         Log.d(MARKER, "@BUS | onErrorRetrievingPosts | response | code = " + response.getCode());
 
-        mIsPostRequestRunning = false;
+        mIsGalleryRequestRunning = false;
         ThreadPool.runOnUiThread(new Runnable() {
             @Override
             public void run() {

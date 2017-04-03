@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 public class PostGalleryInteractorImpl implements PostGalleryInteractor {
 
-    private int mOffset;
     private WPAPI api;
 
     @Inject
@@ -20,12 +19,11 @@ public class PostGalleryInteractorImpl implements PostGalleryInteractor {
     }
 
     @Override
-    public void getImages(String postId) {
-        api.retrieveAllMediaFromPost(postId,mOffset, new WPListener<MediaFromPostResponse>() {
+    public void getImages(String postId, int offset) {
+        api.retrieveAllMediaFromPost(postId,offset, new WPListener<MediaFromPostResponse>() {
             @Override
             public void onResponse(MediaFromPostResponse response) {
                 SignalManagerFactory.getSignalManager().postEvent(response);
-                increaseOffset();
             }
 
             @Override
@@ -35,7 +33,4 @@ public class PostGalleryInteractorImpl implements PostGalleryInteractor {
         });
     }
 
-    public void increaseOffset() {
-        mOffset += MAX_NUMBER_IMAGES_RETURNED;
-    }
 }

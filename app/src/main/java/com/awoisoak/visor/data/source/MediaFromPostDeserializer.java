@@ -48,7 +48,7 @@ class MediaFromPostDeserializer<T extends WPResponse>
             int width = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject().get("width").getAsInt();
             int height = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject().get("height").getAsInt();
             /**
-             * Filter out the few portrait images available ofr aesthetic purposes
+             * Filter out the few portrait images available for aesthetic purposes
              */
             if (width > height) {
                 sizes = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject().get(WPService.SIZES);

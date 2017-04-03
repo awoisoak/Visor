@@ -31,6 +31,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     private List<Post> mPosts = new ArrayList<>();
 
     private boolean mAllPostsDownloaded = false;
+    private int mOffset;
 
     @Inject
     public PostsListPresenterImpl(PostsListView view, PostsRequestInteractor interactor) {
@@ -81,7 +82,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
-                mInteractor.getPosts();
+                mInteractor.getPosts(mOffset);
             }
         });
     }
@@ -94,7 +95,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     @Subscribe
     public void onPostsReceivedEvent(final ListsPostsResponse response) {
         Log.d(MARKER, "@BUS | onPostsReceived | response | code = " + response.getCode());
-
+        increaseOffset();
         mView.hideSnackbar();
         mPosts.addAll(response.getList());
         ThreadPool.runOnUiThread(new Runnable() {
@@ -112,9 +113,13 @@ public class PostsListPresenterImpl implements PostsListPresenter {
                 mIsPostRequestRunning = false;
             }
         });
-        if (response.getList().size() < mInteractor.MAX_NUMBER_POSTS_RETURNED) {
+        if (mOffset >= response.getTotalRecords()) {
             mAllPostsDownloaded = true;
         }
+    }
+
+    public void increaseOffset() {
+        mOffset += mInteractor.MAX_NUMBER_POSTS_RETURNED;
     }
 
     /**

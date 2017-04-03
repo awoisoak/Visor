@@ -7,5 +7,5 @@ public interface PostsRequestInteractor {
      */
     public static int MAX_NUMBER_POSTS_RETURNED = 10;
 
-    void getPosts();
+    void getPosts(int offset);
 }

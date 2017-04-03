@@ -7,5 +7,5 @@ public interface PostGalleryInteractor {
      */
     public static int MAX_NUMBER_IMAGES_RETURNED = 10;
 
-    void getImages(String postId);
+    void getImages(String postId, int offset);
 }
