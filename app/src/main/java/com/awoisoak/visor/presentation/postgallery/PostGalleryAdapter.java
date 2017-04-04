@@ -81,7 +81,7 @@ public class PostGalleryAdapter extends RecyclerView.Adapter<PostGalleryAdapter.
             Glide.with(mContext).load(image.getPostBig())
                     .thumbnail(Glide.with(mContext).load(image.getSmallSize())).dontAnimate()
                     .fitCenter().error(R.drawable.hal_9000).placeholder(R.drawable.place_holder_black)
-                    .crossFade(1000).into(imageView);
+                    .crossFade(750).into(imageView);
         }
 
         @Override

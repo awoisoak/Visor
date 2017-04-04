@@ -6,7 +6,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -40,17 +43,22 @@ class MediaFromPostDeserializer<T extends WPResponse>
         JsonElement sizes;
 
 
-        if (je.toString().equals("[]")) {
+        if (je.toString().equals(WPService.EMPTY_RESPONSE)) {
             imagesList = checkBusan();
         }
 
         for (JsonElement post : arrayImages) {
-            int width = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject().get("width").getAsInt();
-            int height = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject().get("height").getAsInt();
+            int width = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject()
+                    .get(WPService.WIDTH).getAsInt();
+            int height = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject()
+                    .get(WPService.HEIGHT).getAsInt();
             /**
-             * Filter out the few portrait images available for aesthetic purposes
+             * Filter out portrait images and landscapes with maximum 2:1 aspect ratio (2048x1024) pictures
+             * for aesthetic purposes.
+             * (All pics in AwOiSoAk.com are 2048px width)
+             *
              */
-            if (width > height) {
+            if (width > height && height > 1024) {
                 sizes = post.getAsJsonObject().get(WPService.MEDIA_DETAILS).getAsJsonObject().get(WPService.SIZES);
                 thumbnail = sizes.getAsJsonObject().get(WPService.THUMBNAIL_SIZE).getAsJsonObject()
                         .get(WPService.SOURCE_URL);
@@ -58,6 +66,7 @@ class MediaFromPostDeserializer<T extends WPResponse>
                 smallSize =
                         sizes.getAsJsonObject().get(WPService.SMALL_SIZE).getAsJsonObject().get(WPService.SOURCE_URL);
                 full = sizes.getAsJsonObject().get(WPService.FULL_SIZE).getAsJsonObject().get(WPService.SOURCE_URL);
+
 
                 /**
                  * large won't be included if it's not available if the image is too small.

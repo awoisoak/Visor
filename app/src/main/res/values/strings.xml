@@ -2,6 +2,7 @@
     <string name="app_name">Visor</string>
     <string name="action_settings">Settings</string>
     <string name="loading_new_posts">Loading new posts…</string>
+    <string name="loading_new_photos">Loading new pictures…</string>
     <string name="loading_high_res_image">Loading high-res photo…</string>
     <string name="loading_gallery">Loading the photo gallery…</string>
     <string name="loading_posts">Loading the last entries…</string>

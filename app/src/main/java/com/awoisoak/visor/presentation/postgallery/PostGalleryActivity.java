@@ -123,7 +123,7 @@ public class PostGalleryActivity extends AppCompatActivity
 
     @Override
     public void showLoadingSnackbar() {
-        mSnackbar = Snackbar.make(mRecyclerView, getString(R.string.loading_new_posts), Snackbar.LENGTH_INDEFINITE);
+        mSnackbar = Snackbar.make(mRecyclerView, getString(R.string.loading_new_photos), Snackbar.LENGTH_INDEFINITE);
         mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
         mSnackbar.show();
     }
@@ -142,7 +142,7 @@ public class PostGalleryActivity extends AppCompatActivity
 
     @Override
     public void showWelcomeSnackbar() {
-        Snackbar.make(mRecyclerView, R.string.click_to_display_high_res, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mRecyclerView, R.string.click_to_display_high_res, Snackbar.LENGTH_LONG).show();
     }
 
     @Override

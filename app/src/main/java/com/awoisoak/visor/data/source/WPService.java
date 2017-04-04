@@ -14,11 +14,16 @@ import retrofit2.http.Query;
 public interface WPService {
 
 
+    //GENERIC
+    public static String EMPTY_RESPONSE="[]";
+
     //HEADERS
     public static String HEADER_TOTAL_PAGES="X-WP-TotalPages";
     public static String HEADER_TOTAL_RECORDS="X-WP-Total";
 
     //MEDIA
+    public static String WIDTH="width";
+    public static String HEIGHT="height";
     public static String MEDIA_DETAILS="media_details";
     public static String SOURCE_URL="source_url";
     public static String SIZES="sizes";
