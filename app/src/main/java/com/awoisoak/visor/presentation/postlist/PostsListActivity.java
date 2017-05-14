@@ -101,22 +101,23 @@ public class PostsListActivity extends AppCompatActivity
 
     @Override
     public void hideSnackbar() {
-        if (mSnackbar!= null) {
+        if (mSnackbar != null) {
             mSnackbar.dismiss();
         }
     }
 
     @Override
     public void showErrorSnackbar() {
-        mSnackbar = Snackbar.make(mRecyclerView, R.string.error_downloading_posts, Snackbar.LENGTH_INDEFINITE).setAction(
-                "Retry", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSnackbar.dismiss();
-                        showLoadingSnackbar();
-                        mPresenter.onRetryPostRequest();
-                    }
-                });
+        mSnackbar =
+                Snackbar.make(mRecyclerView, R.string.error_downloading_posts, Snackbar.LENGTH_INDEFINITE).setAction(
+                        "Retry", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mSnackbar.dismiss();
+                                showLoadingSnackbar();
+                                mPresenter.onRetryPostRequest();
+                            }
+                        });
         mSnackbar.show();
     }
 
@@ -147,4 +148,5 @@ public class PostsListActivity extends AppCompatActivity
         super.onDestroy();
         mPresenter.onDestroy();
     }
+
 }

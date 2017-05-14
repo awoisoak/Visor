@@ -20,4 +20,5 @@ public interface PostsListPresenter extends IPresenter {
      * Called when the user wants to go inside a post gallery
      */
     void showPostGallery(Post post);
+
 }

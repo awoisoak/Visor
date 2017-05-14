@@ -9,8 +9,8 @@
     android:contextClickable="true"
     android:elevation="50dp"
     android:textAlignment="center"
+>
 
-    >
 
 
     <TextView
@@ -22,7 +22,6 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
         android:elevation="10dp"
-        android:text="Carpe Diem"
         />
 
 
@@ -32,6 +31,7 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         />
+
 
 
 </android.support.v7.widget.CardView>

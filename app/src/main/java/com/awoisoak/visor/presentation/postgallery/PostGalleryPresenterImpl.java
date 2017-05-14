@@ -10,6 +10,7 @@ import com.awoisoak.visor.data.source.responses.ErrorResponse;
 import com.awoisoak.visor.data.source.responses.MediaFromPostResponse;
 import com.awoisoak.visor.domain.interactors.PostGalleryInteractor;
 import com.awoisoak.visor.presentation.photo.PhotoActivity;
+import com.awoisoak.visor.presentation.webview.WebViewActivity;
 import com.awoisoak.visor.signals.SignalManagerFactory;
 import com.awoisoak.visor.threading.ThreadPool;
 import com.squareup.otto.Subscribe;
@@ -66,6 +67,15 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
         Activity activity = mView.getActivity();
         Intent i = new Intent(activity, PhotoActivity.class);
         i.putExtra(PhotoActivity.EXTRA_FULL_IMAGE, image.getFull());
+        activity.startActivity(i);
+    }
+
+    @Override
+    public void showPostEntry(String content, String title) {
+        Activity activity = mView.getActivity();
+        Intent i = new Intent(activity, WebViewActivity.class);
+        i.putExtra(WebViewActivity.EXTRA_CONTENT, content);
+        i.putExtra(WebViewActivity.EXTRA_POST_TITLE, title);
         activity.startActivity(i);
     }
 

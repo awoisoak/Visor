@@ -47,6 +47,7 @@ class ListPostsDeserializer<T extends WPResponse> implements JsonDeserializer<Li
         JsonElement featuredMediaSmall;
         JsonElement images;
         JsonElement links;
+        JsonElement contentRenedered;
 
 
 
@@ -92,10 +93,12 @@ class ListPostsDeserializer<T extends WPResponse> implements JsonDeserializer<Li
                     .get(WPService.SIZES).getAsJsonObject().get(WPService.SMALL_SIZE).getAsJsonObject()
                     .get(WPService.SOURCE_URL);
 
+            contentRenedered = post.getAsJsonObject().get(WPService.CONTENT).getAsJsonObject().get(WPService.RENDERED);
+
             postsList.add(new Post(id.toString(), creationDate.getAsString(), modificationDate.getAsString(),
                                    title.getAsString(),
                                    featuredMedia.getAsString(),featuredMediaSmall.getAsString(),
-                                   images.getAsString()));
+                                   images.getAsString(), contentRenedered.getAsString()));
         }
         ListsPostsResponse r = new ListsPostsResponse(postsList);
         return r;

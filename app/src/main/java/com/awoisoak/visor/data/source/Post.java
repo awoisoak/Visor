@@ -10,15 +10,13 @@ public class Post {
     String creationDate;
     String modificationDate;
     String featuredImage;
-
-
-
     String featuredImageSmall;
     String wpAttachment;
+    String content;
 
 
     public Post(String id, String date, String modificationDate, String title, String wpFeaturedMedia,String wpFeaturedMediaSmall,
-                String wpAttachment) {
+                String wpAttachment, String content) {
         this.id = id;
         this.creationDate = date;
         this.modificationDate = modificationDate;
@@ -26,6 +24,7 @@ public class Post {
         this.featuredImage = wpFeaturedMedia;
         this.featuredImageSmall = wpFeaturedMediaSmall;
         this.wpAttachment = wpAttachment;
+        this.content = content;
     }
 
     public String getCreationDate() {
@@ -61,5 +60,13 @@ public class Post {
      */
     public String getFeaturedImageSmall() {
         return featuredImageSmall;
+    }
+
+    /**
+     * Get the content of the post itself (texts and URL to images)
+     * @return
+     */
+    public String getContent() {
+        return content;
     }
 }

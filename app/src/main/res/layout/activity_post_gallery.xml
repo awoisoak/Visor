@@ -73,5 +73,15 @@
         </android.support.v7.widget.RecyclerView>
     </LinearLayout>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/post_gallery_floating_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_gravity="bottom|right"
+        android:src="@drawable/ic_import_contacts_white_48dp"
+        />
+
 
 </android.support.design.widget.CoordinatorLayout>

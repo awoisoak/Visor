@@ -2,10 +2,8 @@ package com.awoisoak.visor.presentation.postgallery;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,16 +14,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.awoisoak.visor.R;
 import com.awoisoak.visor.data.source.Image;
-import com.awoisoak.visor.data.source.Post;
 import com.awoisoak.visor.presentation.VisorApplication;
 import com.awoisoak.visor.presentation.postgallery.dagger.DaggerPostGalleryComponent;
 import com.awoisoak.visor.presentation.postgallery.dagger.PostGalleryModule;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -40,13 +34,14 @@ public class PostGalleryActivity extends AppCompatActivity
 
     public static final String EXTRA_POST_ID = "post_id";
     public static final String EXTRA_POST_TITLE = "post_title";
+    public static final String EXTRA_CONTENT = "content";
 
     @BindView(R.id.post_gallery_toolbar) Toolbar toolbar;
     @BindView(R.id.post_gallery_recycler) RecyclerView mRecyclerView;
     @BindView(R.id.post_gallery_progress_bar) ProgressBar mProgressBar;
     @BindView(R.id.post_gallery_text_view) TextView mLoadingText;
-
     @BindView(R.id.posts_gallery_title) TextView mTitle;
+    @BindView(R.id.post_gallery_floating_button) FloatingActionButton mFloatingButton;
 
 
     Snackbar mSnackbar;
@@ -88,13 +83,23 @@ public class PostGalleryActivity extends AppCompatActivity
 
         Bundle bundle = getIntent().getExtras();
         String title = new String();
+        String content = new String();
         if (bundle != null) {
             mPostId = bundle.getString(EXTRA_POST_ID);
             title = bundle.getString(EXTRA_POST_TITLE);
+            content = bundle.getString(EXTRA_CONTENT);
         } else {
             Log.e(MARKER, "Bundle passed to PostGalleryActivity is null");
         }
         mTitle.setText(title);
+        final String finalContent = content;
+        final String finalTitle = title;
+        mFloatingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.showPostEntry(finalContent, finalTitle);
+            }
+        });
 
         DaggerPostGalleryComponent.builder()
                 .wPAPIComponent(((VisorApplication) getApplication()).getWPAPIComponent())

@@ -24,6 +24,9 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
     private PostItemClickListener mListener;
     private Context mContext;
 
+    /**
+     * Listener to detect when the user click on a Post item
+     */
     public interface PostItemClickListener {
         void onPostItemClick(Post post);
     }

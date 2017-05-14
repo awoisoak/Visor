@@ -45,6 +45,7 @@ public interface WPService {
     public static String HREF="href";
     public static String EMBEDDED="_embedded";
     public static String WP_FEATURED_MEDIA="wp:featuredmedia";
+    public static String CONTENT="content";
 
 
     /**

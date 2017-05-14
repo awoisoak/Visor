@@ -10,6 +10,7 @@ import com.awoisoak.visor.data.source.responses.ErrorResponse;
 import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
 import com.awoisoak.visor.domain.interactors.PostsRequestInteractor;
 import com.awoisoak.visor.presentation.postgallery.PostGalleryActivity;
+import com.awoisoak.visor.presentation.webview.WebViewActivity;
 import com.awoisoak.visor.signals.SignalManagerFactory;
 import com.awoisoak.visor.threading.ThreadPool;
 import com.squareup.otto.Subscribe;
@@ -67,6 +68,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
         Intent i = new Intent(activity, PostGalleryActivity.class);
         i.putExtra(PostGalleryActivity.EXTRA_POST_ID, post.getId());
         i.putExtra(PostGalleryActivity.EXTRA_POST_TITLE, post.getTitle());
+        i.putExtra(PostGalleryActivity.EXTRA_CONTENT, post.getContent());
         activity.startActivity(i);
     }
 

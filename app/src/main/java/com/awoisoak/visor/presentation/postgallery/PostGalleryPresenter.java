@@ -21,4 +21,11 @@ public interface PostGalleryPresenter extends IPresenter {
      * Called when the user wants to get inside an image
      */
     void showImage(Image image);
+
+    /**
+     * Called when the user wants to read the blog entry
+     * @param content   Blog entry content
+     * @param title     Blog entry title
+     */
+    void showPostEntry(String content, String title);
 }
