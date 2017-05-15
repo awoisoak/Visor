@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.awoisoak.visor.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -48,6 +49,7 @@ public class PhotoActivity extends AppCompatActivity {
 
         Glide.with(this).load(mPhoto)
                 .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .error(R.drawable.hal_9000)
                 .placeholder(R.drawable.place_holder_black)
                 .into(new SimpleTarget<Bitmap>() {

@@ -92,8 +92,8 @@ public class PostsListActivity extends AppCompatActivity
     }
 
     @Override
-    public void showLoadingSnackbar() {
-        mSnackbar = Snackbar.make(mRecyclerView, getString(R.string.loading_new_posts), Snackbar.LENGTH_INDEFINITE);
+    public void showLoadingSnackbar(String message) {
+        mSnackbar = Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_INDEFINITE);
         mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 
         mSnackbar.show();
@@ -107,14 +107,14 @@ public class PostsListActivity extends AppCompatActivity
     }
 
     @Override
-    public void showErrorSnackbar() {
+    public void showErrorSnackbar(final String message) {
         mSnackbar =
-                Snackbar.make(mRecyclerView, R.string.error_downloading_posts, Snackbar.LENGTH_INDEFINITE).setAction(
+                Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_INDEFINITE).setAction(
                         "Retry", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 mSnackbar.dismiss();
-                                showLoadingSnackbar();
+                                showLoadingSnackbar(message);
                                 mPresenter.onRetryPostRequest();
                             }
                         });

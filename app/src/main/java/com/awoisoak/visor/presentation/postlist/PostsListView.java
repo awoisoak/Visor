@@ -28,13 +28,13 @@ public interface PostsListView extends IView {
     /**
      * Display Snackbar to inform the user of new posts being retrieved
      */
-    void showLoadingSnackbar();
+    void showLoadingSnackbar(String message);
 
 
     /**
      * Display Error Snackbar to inform the user there was an error and ask if he/she want to retry.
      */
-    void showErrorSnackbar();
+    void showErrorSnackbar(String message);
 
 
     /**

@@ -67,4 +67,7 @@ dependencies {
     //Subsampling Scale Image View
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:' + SUBSAMPLING_SCALE_IMAGE_VIEW
 
+    // ORMLite
+    compile 'com.j256.ormlite:ormlite-android:' + ORM_LITE
+
 }

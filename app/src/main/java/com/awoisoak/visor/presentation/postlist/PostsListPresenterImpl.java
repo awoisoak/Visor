@@ -2,15 +2,18 @@ package com.awoisoak.visor.presentation.postlist;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.awoisoak.visor.R;
 import com.awoisoak.visor.data.source.Post;
+import com.awoisoak.visor.data.source.local.PostManager;
 import com.awoisoak.visor.data.source.responses.ErrorResponse;
 import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
 import com.awoisoak.visor.domain.interactors.PostsRequestInteractor;
 import com.awoisoak.visor.presentation.postgallery.PostGalleryActivity;
-import com.awoisoak.visor.presentation.webview.WebViewActivity;
 import com.awoisoak.visor.signals.SignalManagerFactory;
 import com.awoisoak.visor.threading.ThreadPool;
 import com.squareup.otto.Subscribe;
@@ -28,11 +31,18 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     private PostsRequestInteractor mInteractor;
 
     private boolean mIsPostRequestRunning;
-    private boolean mIsFirstRequest = true;
     private List<Post> mPosts = new ArrayList<>();
 
     private boolean mAllPostsDownloaded = false;
     private int mOffset;
+
+    //SharedPreferences keys
+    private static String DATABASE_CREATED = "database_created";
+    private static String FIRST_REQUEST = "first_server_request";
+    SharedPreferences mSharedPreferences;
+
+
+
 
     @Inject
     public PostsListPresenterImpl(PostsListView view, PostsRequestInteractor interactor) {
@@ -43,6 +53,10 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     @Override
     public void onCreate() {
         SignalManagerFactory.getSignalManager().register(this);
+        mSharedPreferences = mView.getActivity().getPreferences(Context.MODE_PRIVATE);
+        if (isDatabaseCreated()) {
+            displayPostsFromDb();
+        }
         requestNewPosts();
     }
 
@@ -77,9 +91,14 @@ public class PostsListPresenterImpl implements PostsListPresenter {
      * This will request posts in background. The result will be given Bus event in the methods below
      */
     private void requestNewPosts() {
-        if (!mIsFirstRequest) {
-            mView.showLoadingSnackbar();
+        String message;
+        if (!isFirstRequest()) {
+            message = mView.getActivity().getString(R.string.loading_new_posts);
+        } else {
+            message = mView.getActivity().getString(R.string.loading_posts_first_time);
         }
+        mView.showLoadingSnackbar(message);
+
         mIsPostRequestRunning = true;
         ThreadPool.run(new Runnable() {
             @Override
@@ -104,8 +123,9 @@ public class PostsListPresenterImpl implements PostsListPresenter {
             @Override
             public void run() {
                 mView.hideProgressBar();
-                if (mIsFirstRequest) {
-                    mIsFirstRequest = false;
+                savePostsToDB(mPosts);
+                if (isFirstRequest()) {
+                    setFirstRequestFlag();
                     mView.bindPostsList(mPosts);
 
                 } else {
@@ -138,7 +158,13 @@ public class PostsListPresenterImpl implements PostsListPresenter {
             @Override
             public void run() {
                 mView.hideProgressBar();
-                mView.showErrorSnackbar();
+                String message;
+                if (isFirstRequest()) {
+                    message = mView.getActivity().getString(R.string.error_downloading_posts);
+                } else {
+                    message = mView.getActivity().getString(R.string.error_retrieving_new_posts);
+                }
+                mView.showErrorSnackbar(message);
             }
         });
     }
@@ -173,5 +199,48 @@ public class PostsListPresenterImpl implements PostsListPresenter {
 
     }
 
+
+    private void setFirstRequestFlag() {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putBoolean(FIRST_REQUEST, false);
+        editor.apply();
+    }
+
+    private boolean isFirstRequest() {
+        return mSharedPreferences.getBoolean(FIRST_REQUEST, true);
+    }
+
+    private void savePostsToDB(List<Post> posts) {
+        try {
+            PostManager.getInstance().addposts(posts);
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            editor.putBoolean(DATABASE_CREATED, true);
+            editor.apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isDatabaseCreated() {
+        return mSharedPreferences.getBoolean(DATABASE_CREATED, false);
+    }
+
+    private List<Post> getPostsFromDB() {
+        List<Post> posts = new ArrayList<>();
+        try {
+            posts = PostManager.getInstance().getAllposts();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return posts;
+    }
+
+    /**
+     * If there are posts available in the DB they will be bind to the recyclerview
+     */
+    private void displayPostsFromDb() {
+        mPosts = getPostsFromDB();
+        mView.bindPostsList(mPosts);
+    }
 
 }
