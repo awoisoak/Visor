@@ -1,16 +1,12 @@
 <resources>
     <string name="app_name">Visor</string>
     <string name="action_settings">Settings</string>
-    <string name="loading_posts_first_time">Loading posts…</string>
-    <string name="loading_new_posts">Checking if there is new posts…</string>
-    <string name="loading_new_photos">Loading new pictures…</string>
+    <string name="loading_posts">Loading posts…</string>
+    <string name="loading_photos">Loading new pictures…</string>
     <string name="loading_high_res_image">Loading high-res photo…</string>
     <string name="loading_gallery">Loading the photo gallery…</string>
-    <string name="loading_posts">Loading the last entries…</string>
     <string name="title_activity_post_gallery">Gallery</string>
-    <string name="error_downloading_posts">Couldn\'t download the posts</string>
-    <string name="error_retrieving_new_posts">Couldn\'t check if there are new posts</string>
-    <string name="error_downloading_pictures">Couldn\'t download the pictures</string>
+    <string name="error_network_connection">Couldn\'t connect to the server</string>
     <string name="title_activity_image_fullscreen">ImageFullscreenActivity</string>
     <string name="click_to_display_high_res">Click on a picture to display it in High-res</string>
     <string name="title_activity_webview">webview</string>

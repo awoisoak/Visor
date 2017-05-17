@@ -22,6 +22,7 @@ public interface WPService {
     public static String HEADER_TOTAL_RECORDS="X-WP-Total";
 
     //MEDIA
+    public static String POST_ID = "post";
     public static String WIDTH="width";
     public static String HEIGHT="height";
     public static String MEDIA_DETAILS="media_details";

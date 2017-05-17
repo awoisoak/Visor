@@ -116,7 +116,7 @@ public class PostGalleryActivity extends AppCompatActivity
     }
 
     @Override
-    public void bindPostGallery(List<Image> image) {
+    public void bindImagesList(List<Image> image) {
         mAdapter = new PostGalleryAdapter(image, this, this);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -128,7 +128,7 @@ public class PostGalleryActivity extends AppCompatActivity
 
     @Override
     public void showLoadingSnackbar() {
-        mSnackbar = Snackbar.make(mRecyclerView, getString(R.string.loading_new_photos), Snackbar.LENGTH_INDEFINITE);
+        mSnackbar = Snackbar.make(mRecyclerView, getString(R.string.loading_photos), Snackbar.LENGTH_INDEFINITE);
         mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
         mSnackbar.show();
     }
@@ -153,7 +153,7 @@ public class PostGalleryActivity extends AppCompatActivity
     @Override
     public void showErrorSnackbar() {
         mSnackbar =
-                Snackbar.make(mRecyclerView, getString(R.string.error_downloading_pictures), Snackbar.LENGTH_INDEFINITE)
+                Snackbar.make(mRecyclerView, getString(R.string.error_network_connection), Snackbar.LENGTH_INDEFINITE)
                         .setAction(
                                 "Retry", new View.OnClickListener() {
                                     @Override

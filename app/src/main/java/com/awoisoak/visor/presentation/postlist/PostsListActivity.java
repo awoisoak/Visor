@@ -1,6 +1,7 @@
 package com.awoisoak.visor.presentation.postlist;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -50,8 +52,16 @@ public class PostsListActivity extends AppCompatActivity
         mToolbar.setTitle("");
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBar.getIndeterminateDrawable().setColorFilter(0xFFFF0000, android.graphics.PorterDuff.Mode.MULTIPLY);
+
+        //TODO Testing workaround
+        //http://stackoverflow.com/questions/35653439/recycler-view-inconsistency-detected-invalid-view-holder-adapter-positionviewh
+        //
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+//        mLayoutManager = new WrapContentLinearLayoutManager(this);
+//        mRecyclerView.setLayoutManager(mLayoutManager);
+        //
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -92,8 +102,8 @@ public class PostsListActivity extends AppCompatActivity
     }
 
     @Override
-    public void showLoadingSnackbar(String message) {
-        mSnackbar = Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_INDEFINITE);
+    public void showLoadingSnackbar() {
+        mSnackbar = Snackbar.make(mRecyclerView, getResources().getString(R.string.loading_posts), Snackbar.LENGTH_INDEFINITE);
         mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 
         mSnackbar.show();
@@ -107,14 +117,14 @@ public class PostsListActivity extends AppCompatActivity
     }
 
     @Override
-    public void showErrorSnackbar(final String message) {
+    public void showErrorSnackbar() {
         mSnackbar =
-                Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_INDEFINITE).setAction(
+                Snackbar.make(mRecyclerView, getResources().getString(R.string.error_network_connection), Snackbar.LENGTH_INDEFINITE).setAction(
                         "Retry", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 mSnackbar.dismiss();
-                                showLoadingSnackbar(message);
+                                showLoadingSnackbar();
                                 mPresenter.onRetryPostRequest();
                             }
                         });
@@ -148,5 +158,20 @@ public class PostsListActivity extends AppCompatActivity
         super.onDestroy();
         mPresenter.onDestroy();
     }
-
 }
+
+
+
+// class WrapContentLinearLayoutManager extends LinearLayoutManager {
+//     public WrapContentLinearLayoutManager(Context context) {
+//         super(context);
+//     }
+//     @Override
+//    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+//        try {
+//            super.onLayoutChildren(recycler, state);
+//        } catch (IndexOutOfBoundsException e) {
+//            Log.e("Error", "IndexOutOfBoundsException in RecyclerView happens");
+//        }
+//    }
+//}

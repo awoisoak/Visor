@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.awoisoak.visor.R;
 import com.awoisoak.visor.data.source.Post;
-import com.awoisoak.visor.data.source.local.PostManager;
+import com.awoisoak.visor.data.source.local.BlogManager;
 import com.awoisoak.visor.data.source.responses.ErrorResponse;
 import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
 import com.awoisoak.visor.domain.interactors.PostsRequestInteractor;
@@ -37,11 +37,11 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     private int mOffset;
 
     //SharedPreferences keys
-    private static String DATABASE_CREATED = "database_created";
-    private static String FIRST_REQUEST = "first_server_request";
+    private static String POSTS_TABLE_CREATED = "posts_table_created";
+    private static String FIRST_REQUEST_POSTS_LIST = "first_request_posts_list";
+    private static String TOTAL_RECORDS = "total_records";
+
     SharedPreferences mSharedPreferences;
-
-
 
 
     @Inject
@@ -54,10 +54,12 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     public void onCreate() {
         SignalManagerFactory.getSignalManager().register(this);
         mSharedPreferences = mView.getActivity().getPreferences(Context.MODE_PRIVATE);
-        if (isDatabaseCreated()) {
+        if (isPostsTableCreated()) {
             displayPostsFromDb();
+            //TODO we should create a checkTotalRecords to see if there is new posts entries
+        } else {
+            requestNewPosts();
         }
-        requestNewPosts();
     }
 
 
@@ -70,8 +72,9 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     public void onBottomReached() {
         if (mAllPostsDownloaded) {
             return;
-        }
-        if (!mIsPostRequestRunning) {
+        } else if (isPostsTableCreated()) {
+            displayPostsFromDb();
+        } else if (!mIsPostRequestRunning) {
             requestNewPosts();
         }
     }
@@ -91,13 +94,8 @@ public class PostsListPresenterImpl implements PostsListPresenter {
      * This will request posts in background. The result will be given Bus event in the methods below
      */
     private void requestNewPosts() {
-        String message;
-        if (!isFirstRequest()) {
-            message = mView.getActivity().getString(R.string.loading_new_posts);
-        } else {
-            message = mView.getActivity().getString(R.string.loading_posts_first_time);
-        }
-        mView.showLoadingSnackbar(message);
+
+        mView.showLoadingSnackbar();
 
         mIsPostRequestRunning = true;
         ThreadPool.run(new Runnable() {
@@ -125,9 +123,9 @@ public class PostsListPresenterImpl implements PostsListPresenter {
                 mView.hideProgressBar();
                 savePostsToDB(mPosts);
                 if (isFirstRequest()) {
+                    saveTotalRecords(response.getTotalRecords());
                     setFirstRequestFlag();
                     mView.bindPostsList(mPosts);
-
                 } else {
                     mView.updatePostsList(response.getList());
                     mView.hideSnackbar();
@@ -158,13 +156,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
             @Override
             public void run() {
                 mView.hideProgressBar();
-                String message;
-                if (isFirstRequest()) {
-                    message = mView.getActivity().getString(R.string.error_downloading_posts);
-                } else {
-                    message = mView.getActivity().getString(R.string.error_retrieving_new_posts);
-                }
-                mView.showErrorSnackbar(message);
+                mView.showErrorSnackbar();
             }
         });
     }
@@ -202,33 +194,44 @@ public class PostsListPresenterImpl implements PostsListPresenter {
 
     private void setFirstRequestFlag() {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putBoolean(FIRST_REQUEST, false);
+        editor.putBoolean(FIRST_REQUEST_POSTS_LIST, false);
         editor.apply();
     }
 
     private boolean isFirstRequest() {
-        return mSharedPreferences.getBoolean(FIRST_REQUEST, true);
+        return mSharedPreferences.getBoolean(FIRST_REQUEST_POSTS_LIST, true);
     }
 
     private void savePostsToDB(List<Post> posts) {
         try {
-            PostManager.getInstance().addposts(posts);
+            BlogManager.getInstance().addposts(posts);
             SharedPreferences.Editor editor = mSharedPreferences.edit();
-            editor.putBoolean(DATABASE_CREATED, true);
+            editor.putBoolean(POSTS_TABLE_CREATED, true);
             editor.apply();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private boolean isDatabaseCreated() {
-        return mSharedPreferences.getBoolean(DATABASE_CREATED, false);
+    private void saveTotalRecords(int totalRecords) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putInt(TOTAL_RECORDS, totalRecords);
+        editor.apply();
+    }
+
+    private int getTotalRecords() {
+        return mSharedPreferences.getInt(TOTAL_RECORDS, -1);
+    }
+
+
+    private boolean isPostsTableCreated() {
+        return mSharedPreferences.getBoolean(POSTS_TABLE_CREATED, false);
     }
 
     private List<Post> getPostsFromDB() {
         List<Post> posts = new ArrayList<>();
         try {
-            posts = PostManager.getInstance().getAllposts();
+            posts = BlogManager.getInstance().getPosts(mOffset);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -236,11 +239,42 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     }
 
     /**
-     * If there are posts available in the DB they will be bind to the recyclerview
+     * Check whether the number of posts retrieved from the DB is the expected.
+     * Imagine the db only has 5 posts of the 10 that is supposed to to return...
+     *
+     * @param numberOfPostsReturned
+     * @return
      */
-    private void displayPostsFromDb() {
-        mPosts = getPostsFromDB();
-        mView.bindPostsList(mPosts);
+    private boolean checkNumberOfPosts(int numberOfPostsReturned) {
+
+        int expected;
+        if (getTotalRecords() - mOffset > mInteractor.MAX_NUMBER_POSTS_RETURNED) {
+            expected = mInteractor.MAX_NUMBER_POSTS_RETURNED;
+        } else {
+            expected = getTotalRecords() - mOffset;
+        }
+
+        if (numberOfPostsReturned == expected) {
+            increaseOffset();
+            if (mOffset >= getTotalRecords()) {
+                mAllPostsDownloaded = true;
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
+    /**
+     * If there are posts available in the DB they will be displayed
+     */
+    private void displayPostsFromDb() {
+        List<Post> postsFromDB = getPostsFromDB();
+        if (checkNumberOfPosts(postsFromDB.size())) {
+            mPosts.addAll(postsFromDB);
+            mView.bindPostsList(mPosts);
+        } else {
+            requestNewPosts();
+        }
+    }
 }

@@ -17,7 +17,7 @@ public interface PostGalleryView extends IView {
      * Bind the Images retrieved. The implementation should create the adapter and set to the RecyclerView
      * @param images
      */
-    void bindPostGallery(List<Image> images);
+    void bindImagesList(List<Image> images);
 
     /**
      * Update the adapter with the new images received
