@@ -2,8 +2,6 @@ package com.awoisoak.visor.data.source.local;
 
 import com.awoisoak.visor.data.source.Image;
 import com.awoisoak.visor.data.source.Post;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.QueryBuilder;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -159,21 +157,39 @@ public class BlogManager {
     }
 
     /**
-     * Gets Images from a specific post
+     * Gets all images from a specific post
      *
      * @param postId
      * @return
      * @throws Exception
      */
-    public synchronized List<Image> getImagesFromPost(String postId)
+    public synchronized List<Image> getAllImagesFromPost(String postId)
             throws Exception {
         Preconditions.checkNotNull(mBlogDataStore);
         try {
-            return mBlogDataStore.getImagesFromPost(postId);
+            return mBlogDataStore.getAllImagesFromPost(postId);
         } catch (Exception e) {
             throw new Exception(e);
         }
     }
+
+    /**
+     * Gets images from a specific post given an offset
+     *
+     * @param postId
+     * @return
+     * @throws Exception
+     */
+    public synchronized List<Image> getImagesFromPost(String postId, int offset)
+            throws Exception {
+        Preconditions.checkNotNull(mBlogDataStore);
+        try {
+            return mBlogDataStore.getImagesFromPost(postId, offset);
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+    }
+
 
     /**
      * Remove all Images in the DB

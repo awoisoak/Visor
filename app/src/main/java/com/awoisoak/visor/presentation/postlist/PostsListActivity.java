@@ -30,6 +30,8 @@ import butterknife.ButterKnife;
 
 public class PostsListActivity extends AppCompatActivity
         implements PostsListView, PostsListAdapter.PostItemClickListener {
+    private static final String MARKER = PostsListActivity.class.getSimpleName();
+
     @BindView(R.id.posts_list_toolbar) Toolbar mToolbar;
     @BindView(R.id.posts_list_logo) ImageView mLogo;
     @BindView(R.id.posts_list_recycler) RecyclerView mRecyclerView;
@@ -52,16 +54,8 @@ public class PostsListActivity extends AppCompatActivity
         mToolbar.setTitle("");
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBar.getIndeterminateDrawable().setColorFilter(0xFFFF0000, android.graphics.PorterDuff.Mode.MULTIPLY);
-
-        //TODO Testing workaround
-        //http://stackoverflow.com/questions/35653439/recycler-view-inconsistency-detected-invalid-view-holder-adapter-positionviewh
-        //
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-//        mLayoutManager = new WrapContentLinearLayoutManager(this);
-//        mRecyclerView.setLayoutManager(mLayoutManager);
-        //
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -92,18 +86,39 @@ public class PostsListActivity extends AppCompatActivity
 
     @Override
     public void bindPostsList(List<Post> posts) {
+        System.out.println("awoooooo | PostGalleryActivity | bindPostList");
         mAdapter = new PostsListAdapter(posts, this, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public void updatePostsList(List<Post> posts) {
-        mAdapter.notifyItemRangeInserted(mAdapter.getItemCount() - posts.size(), posts.size());
+        System.out.println("awoooooo | PostGalleryActivity | updatePostList");
+
+        if (mAdapter != null) {
+            /**
+             * We execute like this because of the next bug
+             * http://stackoverflow.com/questions/39445330/cannot-call-notifyiteminserted-method-in-a-scroll-callback-recyclerview-v724-2
+             */
+            mRecyclerView.post(new Runnable() {
+                public void run() {
+                    /**
+                     * We don't use notifyItemRangeInserted because we keep replicating this known Android bug
+                     * https://issuetracker.google.com/issues/37007605
+                     */
+                    //mAdapter.notifyItemRangeInserted(mAdapter.getItemCount() - posts.size(), posts.size());
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+        } else {
+            Log.d(MARKER, "awoooooo | PostGalleryActivity | updatePostGallery | mAdapter is null!");
+        }
     }
 
     @Override
     public void showLoadingSnackbar() {
-        mSnackbar = Snackbar.make(mRecyclerView, getResources().getString(R.string.loading_posts), Snackbar.LENGTH_INDEFINITE);
+        mSnackbar = Snackbar.make(mRecyclerView, getResources().getString(R.string.loading_posts),
+                                  Snackbar.LENGTH_INDEFINITE);
         mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 
         mSnackbar.show();
@@ -119,7 +134,8 @@ public class PostsListActivity extends AppCompatActivity
     @Override
     public void showErrorSnackbar() {
         mSnackbar =
-                Snackbar.make(mRecyclerView, getResources().getString(R.string.error_network_connection), Snackbar.LENGTH_INDEFINITE).setAction(
+                Snackbar.make(mRecyclerView, getResources().getString(R.string.error_network_connection),
+                              Snackbar.LENGTH_INDEFINITE).setAction(
                         "Retry", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -159,19 +175,3 @@ public class PostsListActivity extends AppCompatActivity
         mPresenter.onDestroy();
     }
 }
-
-
-
-// class WrapContentLinearLayoutManager extends LinearLayoutManager {
-//     public WrapContentLinearLayoutManager(Context context) {
-//         super(context);
-//     }
-//     @Override
-//    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
-//        try {
-//            super.onLayoutChildren(recycler, state);
-//        } catch (IndexOutOfBoundsException e) {
-//            Log.e("Error", "IndexOutOfBoundsException in RecyclerView happens");
-//        }
-//    }
-//}

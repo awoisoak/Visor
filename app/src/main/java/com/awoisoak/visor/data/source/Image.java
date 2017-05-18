@@ -26,6 +26,7 @@ public class Image {
     @DatabaseField(id = true, columnName = ID)
     String id;
 
+
     /**
      * POST id which the image belongs to
      */
@@ -134,5 +135,13 @@ public class Image {
      */
     public String getThumbnail() {
         return thumbnail;
+    }
+
+    /**
+     * Post Id which this image belongs to
+     * @return
+     */
+    public String getPostId() {
+        return postId;
     }
 }

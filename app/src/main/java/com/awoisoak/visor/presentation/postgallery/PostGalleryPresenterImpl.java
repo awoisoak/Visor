@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.awoisoak.visor.data.source.Image;
-import com.awoisoak.visor.data.source.Post;
 import com.awoisoak.visor.data.source.local.BlogManager;
 import com.awoisoak.visor.data.source.responses.ErrorResponse;
 import com.awoisoak.visor.data.source.responses.MediaFromPostResponse;
@@ -41,7 +40,9 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     //SharedPreferences keys
     private static String IMAGES_TABLE_CREATED = "images_table_created_";
-    private static String FIRST_REQUEST_IMAGES = "first_request_images_";
+    private static String TOTAL_IMAGES = "total_records_";
+    boolean isFirstRequest= true;
+
     SharedPreferences mSharedPreferences;
 
 
@@ -58,7 +59,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
         mPostId = mView.getPostId();
         if (isImagesTableCreated()) {
             displayImagesFromDb();
-        }else {
+        } else {
             requestNewImages();
         }
     }
@@ -73,8 +74,9 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
     public void onBottomReached() {
         if (mAllImagesDownloaded) {
             return;
-        }
-        if (!mIsGalleryRequestRunning) {
+        }else if (isImagesTableCreated()) {
+            displayImagesFromDb();
+        }else {
             requestNewImages();
         }
     }
@@ -101,17 +103,19 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
      * This will request posts in background. The result will be given Bus event in the methods below
      */
     private void requestNewImages() {
-        if (!isFirstRequest()) {
-            mView.showLoadingSnackbar();
-        }
-        mIsGalleryRequestRunning = true;
-        ThreadPool.run(new Runnable() {
-            @Override
-            public void run() {
-                mInteractor.getImages(mPostId, mOffset);
-
+        if (!mIsGalleryRequestRunning) {
+            if (!isFirstRequest) {
+                mView.showLoadingSnackbar();
             }
-        });
+            mIsGalleryRequestRunning = true;
+            ThreadPool.run(new Runnable() {
+                @Override
+                public void run() {
+                    mInteractor.getImages(mPostId, mOffset);
+
+                }
+            });
+        }
     }
 
     /**
@@ -122,28 +126,45 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
     @Subscribe
     public void onPostsReceivedEvent(final MediaFromPostResponse response) {
         Log.d(MARKER, "@BUS | onPostsReceived | response | code = " + response.getCode());
-        increaseOffset();
-        mView.hideSnackbar();
-        mImages.addAll(response.getList());
-        ThreadPool.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mView.hideProgressBar();
-                saveImagesToDB(mImages);
-                if (isFirstRequest()) {
-                    mView.showWelcomeSnackbar();
-                    setFirstRequestFlag();
-                    mView.bindImagesList(mImages);
+        /**
+         * To avoid the problem where the mPostId is changed just before we save the images to the DB.
+         * Otherwise we might be saving images from a post entry into a different
+         */
+        synchronized (mPostId) {
 
-                } else {
-                    mView.updatePostGallery(response.getList());
-                    mView.hideSnackbar();
-                }
-                mIsGalleryRequestRunning = false;
+            /**
+             * To avoid the bug when opening/closing quickly several posts.
+             * The BUS events where being delivered to different instance of PostGalleryPresenterImpl
+             */
+            if (!response.getList().get(0).getPostId().equals(mPostId)) {
+                Log.d(MARKER, "awooooo | PostGalleryPresenterImpl | onPostReceivedEvent for postid="
+                        + response.getList().get(0).getPostId() + " instead of " + mPostId);
+                return;
             }
-        });
-        if (mOffset >= response.getTotalRecords()) {
-            mAllImagesDownloaded = true;
+            increaseOffset();
+            mView.hideSnackbar();
+            mImages.addAll(response.getList());
+            ThreadPool.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mView.hideProgressBar();
+                    saveImagesToDB(mImages);
+                    if (isFirstRequest) {
+                        mView.showWelcomeSnackbar();
+                        isFirstRequest = false;
+                        mView.bindImagesList(mImages);
+
+                    } else {
+                        mView.updatePostGallery(response.getList());
+                        mView.hideSnackbar();
+                    }
+                    mIsGalleryRequestRunning = false;
+                }
+            });
+            if (mOffset >= response.getTotalRecords()) {
+                mAllImagesDownloaded = true;
+                saveTotalRecords(mImages.size());
+            }
         }
 
     }
@@ -174,8 +195,6 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     @Override
     public void onDestroy() {
-        System.out.println("awoooooo | PostGallery | onDestroy");
-
         SignalManagerFactory.getSignalManager().unregister(this);
         mView = null;
     }
@@ -186,8 +205,6 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     @Override
     public void onStop() {
-        System.out.println("awoooooo | PostGallery | onStop");
-
     }
 
     @Override
@@ -197,25 +214,18 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     @Override
     public void onPause() {
-        System.out.println("awoooooo | PostGallery | onPause");
 
     }
 
     @Override
     public void onBackPressed() {
-        System.out.println("awoooooo | PostGallery | onBackPressed");
     }
 
-    private void setFirstRequestFlag() {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putBoolean(FIRST_REQUEST_IMAGES + mPostId, false);
-        editor.apply();
-    }
 
-    private boolean isFirstRequest() {
-        return mSharedPreferences.getBoolean(FIRST_REQUEST_IMAGES + mPostId, true);
-    }
-
+    /**
+     * Save a list of images into the DB
+     * @param images
+     */
     private void saveImagesToDB(List<Image> images) {
         try {
             BlogManager.getInstance().addImages(images);
@@ -227,15 +237,44 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
         }
     }
 
+    /**
+     * Save total number of images available in the post entry
+     * In this case total records won't be the value given by the server, but the total number of images
+     * after the filters have been applied {@see MediaFromPostDeserializer}
+     * @param totalRecords
+     */
+    private void saveTotalRecords(int totalRecords) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putInt(TOTAL_IMAGES + mPostId, totalRecords);
+        editor.apply();
+    }
 
+    /**
+     * Get total number of images available in the post entry
+     * @return
+     */
+    private int getTotalRecords() {
+        return mSharedPreferences.getInt(TOTAL_IMAGES + mPostId, -1);
+    }
+
+    /**
+     * Check if the table 'Images' has already been created in the DB
+     * The table might not include all images records yet
+     *
+     * @return
+     */
     private boolean isImagesTableCreated() {
         return mSharedPreferences.getBoolean(IMAGES_TABLE_CREATED + mPostId, false);
     }
 
+    /**
+     * Get images stored in the DB using the current offset
+     * @return
+     */
     private List<Image> getImagesFromDB() {
         List<Image> image = new ArrayList<>();
         try {
-            image = BlogManager.getInstance().getImagesFromPost(mPostId);
+            image = BlogManager.getInstance().getImagesFromPost(mPostId, mOffset);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -243,11 +282,53 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
     }
 
     /**
+     * Check whether the number of images retrieved from the DB is the expected one.
+     * (The DB might not include all available images in the post entry yet)
+     *
+     * @param numberOfPostsReturned
+     * @return
+     */
+    private boolean checkNumberOfImages(int numberOfPostsReturned) {
+        int expected;
+        if (getTotalRecords() - mOffset > mInteractor.MAX_NUMBER_IMAGES_RETURNED) {
+            expected = mInteractor.MAX_NUMBER_IMAGES_RETURNED;
+        } else {
+            expected = getTotalRecords() - mOffset;
+        }
+
+        if (numberOfPostsReturned == expected) {
+            increaseOffset();
+            if (mOffset >= getTotalRecords()) {
+                mAllImagesDownloaded = true;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * If there are images available in the DB they will be displayed
      */
     private void displayImagesFromDb() {
-        mImages = getImagesFromDB();
-        mView.bindImagesList(mImages);
+        if (getTotalRecords() == -1){// Becasuse we r filtering out images, so we can only trust the cache DB once all images were downloaded
+            requestNewImages();
+        }else {
+            List<Image> imagesFromDB = getImagesFromDB();
+            if (checkNumberOfImages(imagesFromDB.size())) {
+                mImages.addAll(imagesFromDB);
+                if (isFirstRequest){
+                    isFirstRequest = false;
+                    mView.bindImagesList(mImages);
+                } else{
+                    mView.updatePostGallery(mImages);
+                }
+
+            } else {
+                requestNewImages();
+            }
+        }
+
     }
 
 }

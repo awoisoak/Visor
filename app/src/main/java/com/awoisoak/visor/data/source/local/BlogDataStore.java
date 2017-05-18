@@ -11,6 +11,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -32,7 +33,7 @@ public class BlogDataStore {
      * Default value in WP
      * https://developer.wordpress.org/rest-api/reference/media/#arguments
      */
-    public static long MAX_NUMBER_IMAGES_RETURNED = 10;
+    public static int MAX_NUMBER_IMAGES_RETURNED = 10;
 
     /**
      * Private constructor.
@@ -97,7 +98,6 @@ public class BlogDataStore {
     }
 
 
-
     /**
      * Retrieve a list of posts given an offset
      *
@@ -108,11 +108,11 @@ public class BlogDataStore {
             throws Exception {
         try {
             Dao<Post, String> postDao = mDatabaseHelper.getPostDao();
-            QueryBuilder<Post, String> queryBuilder=  postDao.queryBuilder();
+            QueryBuilder<Post, String> queryBuilder = postDao.queryBuilder();
             queryBuilder.offset((long) offset).limit(MAX_NUMBER_POSTS_RETURNED);
             return postDao.query(queryBuilder.prepare());
         } catch (SQLException e) {
-            throw new Exception("Error retrieving posts in the DB from offset = "+offset, e);
+            throw new Exception("Error retrieving posts in the DB from offset = " + offset, e);
         }
     }
 
@@ -177,15 +177,39 @@ public class BlogDataStore {
      * @return
      * @throws Exception
      */
-    public List<Image> getImagesFromPost(String postId)
+    public List<Image> getAllImagesFromPost(String postId)
             throws Exception {
         try {
             Dao<Image, String> ImageDao = mDatabaseHelper.getImageDao();
-            return ImageDao.queryForEq(Image.POST_ID,postId);
+            return ImageDao.queryForEq(Image.POST_ID, postId);
         } catch (SQLException e) {
             throw new Exception("Error retrieving all the Images in the DB", e);
         }
     }
+
+
+    /**
+     * Gets Images from a specific post given an offset
+     *
+     * @param postId
+     * @param offset
+     * @return
+     * @throws Exception
+     */
+
+    public List<Image> getImagesFromPost(String postId, int offset) throws Exception {
+        try {
+            List<Image> allImages = getAllImagesFromPost(postId);
+            if (allImages.size() >= offset + MAX_NUMBER_IMAGES_RETURNED) {
+                return allImages.subList(offset, (offset + MAX_NUMBER_IMAGES_RETURNED));
+            } else {
+                return allImages.subList(offset, allImages.size());
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error retrieving Images for postId" + postId + "in the DB with offset=" + offset, e);
+        }
+    }
+
 
     /**
      * Remove all Images

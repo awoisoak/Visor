@@ -117,13 +117,32 @@ public class PostGalleryActivity extends AppCompatActivity
 
     @Override
     public void bindImagesList(List<Image> image) {
+        Log.d(MARKER,"awoooooo | PostGalleryActivity | bindImagesList");
         mAdapter = new PostGalleryAdapter(image, this, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
-    public void updatePostGallery(List<Image> images) {
-        mAdapter.notifyItemRangeInserted(mAdapter.getItemCount() - images.size(), images.size());
+    public void updatePostGallery(final List<Image> images) {
+        Log.d(MARKER,"awoooooo | PostGalleryActivity | updatePostGallery");
+        if (mAdapter != null) {
+            /**
+             * We execute like this because of the next bug
+             * http://stackoverflow.com/questions/39445330/cannot-call-notifyiteminserted-method-in-a-scroll-callback-recyclerview-v724-2
+             */
+            mRecyclerView.post(new Runnable() {
+                public void run() {
+                    /**
+                     * We don't use notifyItemRangeInserted because we keep replicating this known Android bug
+                     * https://issuetracker.google.com/issues/37007605
+                     */
+                    //mAdapter.notifyItemRangeInserted(mAdapter.getItemCount() - images.size(), images.size());
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+        } else {
+            Log.d(MARKER, "awoooooo | PostGalleryActivity | updatePostGallery | mAdapter is null!");
+        }
     }
 
     @Override
