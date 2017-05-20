@@ -20,7 +20,7 @@ public class PostGalleryInteractorImpl implements PostGalleryInteractor {
 
     @Override
     public void getImages(String postId, int offset) {
-        api.retrieveAllMediaFromPost(postId,offset, new WPListener<MediaFromPostResponse>() {
+        api.getImagesFromPost(postId, offset, new WPListener<MediaFromPostResponse>() {
             @Override
             public void onResponse(MediaFromPostResponse response) {
                 SignalManagerFactory.getSignalManager().postEvent(response);

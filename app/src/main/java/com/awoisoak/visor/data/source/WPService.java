@@ -50,7 +50,9 @@ public interface WPService {
 
 
     /**
-     * List all posts in the website
+     * Retrieve the {@link com.awoisoak.visor.domain.interactors.PostsRequestInteractor#MAX_NUMBER_POSTS_RETURNED}
+     * posts given the passed offset.
+     *
      * ?_embed is added to the request in order to include the embedded media in the response (ex. featured media)
      * avoiding us to trigger a second request
      *
@@ -58,17 +60,30 @@ public interface WPService {
      * @return
      */
     @GET("/wp-json/wp/v2/posts?_embed")
-    Call<ListsPostsResponse> listPosts(@Query("offset") int offset);
+    Call<ListsPostsResponse> getPosts(@Query("offset") int offset);
+
+    /**
+     * Retrieve the posts newer than the passed date
+     *
+     * ?_embed is added to the request in order to include the embedded media in the response (ex. featured media)
+     * avoiding us to trigger a second request
+     *
+     * @param date
+     * @return
+     */
+    //TODO Max number of posts returned is 10 by default, we leave it like this?
+    @GET("/wp-json/wp/v2/posts?_embed")
+    Call<ListsPostsResponse> getLastPostsFrom(@Query("after") String date);
 
 
     /**
-     * Retrieve all media from a post
+     * Retrieve the {@link com.awoisoak.visor.domain.interactors.PostGalleryInteractor#MAX_NUMBER_IMAGES_RETURNED}
+     * images from the specific post given the passed offset
      *
      * @param parent, parent post Id
      * @return
      */
-    //TODO add offset
     @GET("/wp-json/wp/v2/media")
-    Call<MediaFromPostResponse> retrieveAllMediaFromPost(@Query("parent") String parent, @Query("offset") int offset);
+    Call<MediaFromPostResponse> getImagesFromPost(@Query("parent") String parent, @Query("offset") int offset);
 
 }

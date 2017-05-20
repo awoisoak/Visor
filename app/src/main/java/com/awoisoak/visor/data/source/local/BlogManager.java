@@ -217,4 +217,20 @@ public class BlogManager {
             throw new SQLException(e);
         }
     }
+
+
+    /**
+     * Retrieve the last post entry saved in the DB
+     *
+     * @return Posts List, empty list if no Post was found
+     * @throws UnknownError
+     */
+    public Post getLastPost() throws Exception {
+        try {
+            return mBlogDataStore.getLastPost();
+        } catch (SQLException e) {
+            throw new Exception("Error retrieving the last post entry from the DB ", e);
+        }
+    }
+
 }

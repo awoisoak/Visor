@@ -20,7 +20,22 @@ public class PostsRequestInteractorImpl implements PostsRequestInteractor {
 
     @Override
     public void getPosts(int offset) {
-        api.listPosts(offset, new WPListener<ListsPostsResponse>() {
+        api.getPosts(offset, new WPListener<ListsPostsResponse>() {
+            @Override
+            public void onResponse(ListsPostsResponse response) {
+                SignalManagerFactory.getSignalManager().postEvent(response);
+            }
+
+            @Override
+            public void onError(ErrorResponse error) {
+                SignalManagerFactory.getSignalManager().postEvent(error);
+            }
+        });
+    }
+
+    @Override
+    public void getLastPostsFrom(String date) {
+        api.getLastPostsFrom(date, new WPListener<ListsPostsResponse>() {
             @Override
             public void onResponse(ListsPostsResponse response) {
                 SignalManagerFactory.getSignalManager().postEvent(response);

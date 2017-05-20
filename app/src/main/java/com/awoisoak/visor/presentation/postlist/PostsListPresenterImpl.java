@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.awoisoak.visor.data.source.Post;
+import com.awoisoak.visor.data.source.WPAPI;
 import com.awoisoak.visor.data.source.local.BlogManager;
 import com.awoisoak.visor.data.source.responses.ErrorResponse;
 import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
@@ -17,6 +18,7 @@ import com.awoisoak.visor.signals.SignalManagerFactory;
 import com.awoisoak.visor.threading.ThreadPool;
 import com.squareup.otto.Subscribe;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +40,10 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     //SharedPreferences keys
     private static String POSTS_TABLE_CREATED = "posts_table_created";
     private static String TOTAL_POSTS = "total_records";
+    private static String LAST_POST_ENTRY = "last_post_entry";
 
     boolean isFirstRequest = true;
+    boolean mCheckingNewEntriesRunning = false;
     SharedPreferences mSharedPreferences;
 
 
@@ -55,9 +59,8 @@ public class PostsListPresenterImpl implements PostsListPresenter {
         SignalManagerFactory.getSignalManager().register(this);
         mSharedPreferences = mView.getActivity().getPreferences(Context.MODE_PRIVATE);
         if (isPostsTableCreated()) {
-            displayPostsFromDb();
-            //TODO we should create a checkTotalRecords to detect when there are new posts entries
-            //TODO We might call it too(not only) from a future Android Notification
+            //TODO We should check new entries using FirebaseJobDispatcher and triggering anAndroid Notification
+            checkIfThereIsNewPostEntries();
         } else {
             requestNewPosts();
         }
@@ -117,16 +120,47 @@ public class PostsListPresenterImpl implements PostsListPresenter {
     @Subscribe
     public void onPostsReceivedEvent(final ListsPostsResponse response) {
         Log.d(MARKER, "@BUS | onPostsReceived | response | code = " + response.getCode());
-        increaseOffset();
-        mView.hideSnackbar();
-        mPosts.addAll(response.getList());
+
+        if (response.getList().size() == 0) {
+            Log.d(MARKER, "onPostsReceivedEvent = 0. No newer posts");
+            ThreadPool.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    displayPostsFromDb();
+                }
+            });
+            return;
+        }
+
+        /**
+         * When checking if there is new entries there will be potentially only 1 post new so we must populate
+         * the mPost with records from the DB (otherwise the RecyclerView will only display the new post)
+         */
+        if (mCheckingNewEntriesRunning) {
+            Log.d(MARKER, "We populate the mPost with records from the DB");
+            mPosts.addAll(response.getList());
+            mPosts.addAll(getPostsFromDB());
+            mOffset += WPAPI.MAX_NUMBER_POSTS_RETURNED + response.getList().size();
+        } else {
+            mPosts.addAll(response.getList());
+            increaseOffset();
+        }
         ThreadPool.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mView.hideSnackbar();
                 mView.hideProgressBar();
                 savePostsToDB(mPosts);
                 if (isFirstRequest) {
-                    saveTotalRecords(response.getTotalRecords());
+                    /**
+                     * When checking new entries the total records will be just the number of new posts
+                     */
+                    if (!mCheckingNewEntriesRunning) {
+                        saveTotalRecords(response.getTotalRecords());
+                    } else {
+                        saveTotalRecords(getTotalRecords() + response.getTotalRecords());
+                    }
+                    saveLastPostEntry(response.getList().get(0).getId());
                     isFirstRequest = false;
                     mView.bindPostsList(mPosts);
                 } else {
@@ -134,15 +168,16 @@ public class PostsListPresenterImpl implements PostsListPresenter {
                     mView.hideSnackbar();
                 }
                 mIsPostRequestRunning = false;
+                if (mOffset >= getTotalRecords()) {
+                    mAllPostsDownloaded = true;
+                }
             }
         });
-        if (mOffset >= response.getTotalRecords()) {
-            mAllPostsDownloaded = true;
-        }
+
     }
 
     public void increaseOffset() {
-        mOffset += mInteractor.MAX_NUMBER_POSTS_RETURNED;
+        mOffset += WPAPI.MAX_NUMBER_POSTS_RETURNED;
     }
 
     /**
@@ -160,6 +195,14 @@ public class PostsListPresenterImpl implements PostsListPresenter {
             public void run() {
                 mView.hideProgressBar();
                 mView.showErrorSnackbar();
+                /**
+                 * If we are checking new entries (in onCreate) and the table was already created we display
+                 * the posts from the database
+                 */
+                if (mCheckingNewEntriesRunning && isPostsTableCreated()) {
+                    mCheckingNewEntriesRunning = false;
+                    displayPostsFromDb();
+                }
             }
         });
     }
@@ -194,8 +237,26 @@ public class PostsListPresenterImpl implements PostsListPresenter {
 
     }
 
+    private void checkIfThereIsNewPostEntries() {
+        try {
+            final String lastPostDate = BlogManager.getInstance().getLastPost().getCreationDate();
+            mCheckingNewEntriesRunning = true;
+            ThreadPool.run(new Runnable() {
+                @Override
+                public void run() {
+                    mInteractor.getLastPostsFrom(lastPostDate);
+                }
+            });
+        } catch (Exception e) {
+            Log.d(MARKER, "Exception checking if there is new entry posts in the Blog. No internet connection?");
+            displayPostsFromDb();
+        }
+    }
+
+
     /**
      * Save a list of posts into the DB
+     *
      * @param posts
      */
     private void savePostsToDB(List<Post> posts) {
@@ -209,8 +270,32 @@ public class PostsListPresenterImpl implements PostsListPresenter {
         }
     }
 
+
+    /**
+     * Save last post entry id
+     *
+     * @param postId
+     */
+    private void saveLastPostEntry(String postId) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(LAST_POST_ENTRY, postId);
+        editor.apply();
+    }
+
+
+    /**
+     * Get last post entry id
+     *
+     * @return
+     */
+    private int getLastPostEntry() {
+        return mSharedPreferences.getInt(LAST_POST_ENTRY, -1);
+    }
+
+
     /**
      * Save total number of posts available in the blog
+     *
      * @param totalRecords
      */
     private void saveTotalRecords(int totalRecords) {
@@ -221,6 +306,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
 
     /**
      * Get total number of posts available in the blog
+     *
      * @return
      */
     private int getTotalRecords() {
@@ -240,6 +326,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
 
     /**
      * Get posts stored in the DB using the current offset
+     *
      * @return
      */
     private List<Post> getPostsFromDB() {
@@ -261,8 +348,8 @@ public class PostsListPresenterImpl implements PostsListPresenter {
      */
     private boolean checkNumberOfPosts(int numberOfPostsReturned) {
         int expected;
-        if (getTotalRecords() - mOffset > mInteractor.MAX_NUMBER_POSTS_RETURNED) {
-            expected = mInteractor.MAX_NUMBER_POSTS_RETURNED;
+        if (getTotalRecords() - mOffset > WPAPI.MAX_NUMBER_POSTS_RETURNED) {
+            expected = WPAPI.MAX_NUMBER_POSTS_RETURNED;
         } else {
             expected = getTotalRecords() - mOffset;
         }

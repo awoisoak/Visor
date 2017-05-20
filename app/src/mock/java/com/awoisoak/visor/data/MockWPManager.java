@@ -38,7 +38,7 @@ public class MockWPManager implements WPAPI {
 
     @Override
     public void listPosts(int offset, WPListener<ListsPostsResponse> l) {
-        System.out.println("awoooooo | MockWPManager | listPosts");
+        System.out.println("awoooooo | MockWPManager | getPosts");
 
         List<Post> postList = new ArrayList<Post>();
         ListsPostsResponse r = null;
@@ -79,7 +79,7 @@ public class MockWPManager implements WPAPI {
 
     @Override
     public void retrieveAllMediaFromPost(String parent, int offset, WPListener<MediaFromPostResponse> l) {
-        System.out.println("awoooooo | MockWPManager | retrieveAllMediaFromPost");
+        System.out.println("awoooooo | MockWPManager | getImagesFromPost");
         List<Image> imageList = new ArrayList<Image>();
         MediaFromPostResponse r = null;
 

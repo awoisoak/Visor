@@ -24,7 +24,7 @@ public class WPManagerTests {
 
     @Test
     public void test1_listPosts() throws Exception {
-        WPManager.getInstance().listPosts(0, new WPListener<ListsPostsResponse>() {
+        WPManager.getInstance().getPosts(0, new WPListener<ListsPostsResponse>() {
             @Override
             public void onResponse(ListsPostsResponse response) {
                 assertEquals(response.getCode(), OK_RESPONSE);
@@ -33,7 +33,7 @@ public class WPManagerTests {
 
             @Override
             public void onError(ErrorResponse error) {
-                System.out.println("listPosts onError" + error.getMessage());
+                System.out.println("getPosts onError" + error.getMessage());
                 fail();
             }
         });
@@ -41,18 +41,18 @@ public class WPManagerTests {
 
     @Test
     public void test2_retrieveAllMediaFromPost() throws Exception {
-        WPManager.getInstance().retrieveAllMediaFromPost(mPostId, 0, new WPListener<MediaFromPostResponse>() {
+        WPManager.getInstance().getImagesFromPost(mPostId, 0, new WPListener<MediaFromPostResponse>() {
             @Override
             public void onResponse(MediaFromPostResponse response) {
                 assertEquals(response.getCode(), OK_RESPONSE);
                 assertNotNull(response.getList().get(1).getFull());
                 System.out.println(
-                        "awooooooo | retrieveAllMediaFromPost| full image href" + response.getList().get(1).getFull());
+                        "awooooooo | getImagesFromPost| full image href" + response.getList().get(1).getFull());
             }
 
             @Override
             public void onError(ErrorResponse error) {
-                System.out.println("retrieveAllMediaFromPost onError" + error.getMessage());
+                System.out.println("getImagesFromPost onError" + error.getMessage());
                 fail();
             }
         });

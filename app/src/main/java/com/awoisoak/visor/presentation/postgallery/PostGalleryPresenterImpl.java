@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.awoisoak.visor.data.source.Image;
+import com.awoisoak.visor.data.source.WPAPI;
 import com.awoisoak.visor.data.source.local.BlogManager;
 import com.awoisoak.visor.data.source.responses.ErrorResponse;
 import com.awoisoak.visor.data.source.responses.MediaFromPostResponse;
@@ -170,7 +171,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
     }
 
     public void increaseOffset() {
-        mOffset += mInteractor.MAX_NUMBER_IMAGES_RETURNED;
+        mOffset += WPAPI.MAX_NUMBER_IMAGES_RETURNED;
     }
 
 
@@ -290,8 +291,8 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
      */
     private boolean checkNumberOfImages(int numberOfPostsReturned) {
         int expected;
-        if (getTotalRecords() - mOffset > mInteractor.MAX_NUMBER_IMAGES_RETURNED) {
-            expected = mInteractor.MAX_NUMBER_IMAGES_RETURNED;
+        if (getTotalRecords() - mOffset > WPAPI.MAX_NUMBER_IMAGES_RETURNED) {
+            expected = WPAPI.MAX_NUMBER_IMAGES_RETURNED;
         } else {
             expected = getTotalRecords() - mOffset;
         }

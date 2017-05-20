@@ -1,11 +1,17 @@
 package com.awoisoak.visor.domain.interactors;
 
 public interface PostsRequestInteractor {
-    /**
-     * Default value in WP
-     * https://developer.wordpress.org/rest-api/reference/posts/#arguments
-     */
-    public static int MAX_NUMBER_POSTS_RETURNED = 10;
 
+
+    /**
+     * Retrieve the {@link PostsRequestInteractor#MAX_NUMBER_POSTS_RETURNED} posts using the passed offset
+     * @param offset
+     */
     void getPosts(int offset);
+
+    /**
+     * Retrieve the posts newer that the passed date
+     * @param date
+     */
+    void getLastPostsFrom(String date);
 }

@@ -56,14 +56,20 @@ public class WPManager implements WPAPI {
 
 
     @Override
-    public void listPosts(@Nullable int offset, WPListener<ListsPostsResponse> l) {
-        Call<ListsPostsResponse> c = service.listPosts(offset);
+    public void getPosts(@Nullable int offset, WPListener<ListsPostsResponse> l) {
+        Call<ListsPostsResponse> c = service.getPosts(offset);
         responseRequest(c, l);
     }
 
     @Override
-    public void retrieveAllMediaFromPost(String parent, int offset, WPListener<MediaFromPostResponse> l) {
-        Call<MediaFromPostResponse> c = service.retrieveAllMediaFromPost(parent, offset);
+    public void getLastPostsFrom(String date, WPListener<ListsPostsResponse> l) {
+        Call<ListsPostsResponse> c = service.getLastPostsFrom(date);
+        responseRequest(c, l);
+    }
+
+    @Override
+    public void getImagesFromPost(String parent, int offset, WPListener<MediaFromPostResponse> l) {
+        Call<MediaFromPostResponse> c = service.getImagesFromPost(parent, offset);
         responseRequest(c, l);
     }
 

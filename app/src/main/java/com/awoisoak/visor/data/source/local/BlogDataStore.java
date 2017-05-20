@@ -4,14 +4,11 @@ import android.content.Context;
 
 import com.awoisoak.visor.data.source.Image;
 import com.awoisoak.visor.data.source.Post;
-import com.awoisoak.visor.data.source.WPAPI;
-import com.awoisoak.visor.data.source.WPService;
 import com.awoisoak.visor.presentation.VisorApplication;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -90,8 +87,9 @@ public class BlogDataStore {
     public List<Post> getAllPosts()
             throws Exception {
         try {
-            Dao<Post, String> PostDao = mDatabaseHelper.getPostDao();
-            return PostDao.queryForAll();
+            Dao<Post, String> postDao = mDatabaseHelper.getPostDao();
+            QueryBuilder<Post, String> queryBuilder = postDao.queryBuilder();
+            return queryBuilder.orderBy(Post.CREATION_DATE, false).query();
         } catch (SQLException e) {
             throw new Exception("Error retrieving all the Posts in the DB", e);
         }
@@ -109,7 +107,7 @@ public class BlogDataStore {
         try {
             Dao<Post, String> postDao = mDatabaseHelper.getPostDao();
             QueryBuilder<Post, String> queryBuilder = postDao.queryBuilder();
-            queryBuilder.offset((long) offset).limit(MAX_NUMBER_POSTS_RETURNED);
+            queryBuilder.orderBy(Post.CREATION_DATE,false).offset((long) offset).limit(MAX_NUMBER_POSTS_RETURNED);
             return postDao.query(queryBuilder.prepare());
         } catch (SQLException e) {
             throw new Exception("Error retrieving posts in the DB from offset = " + offset, e);
@@ -231,4 +229,19 @@ public class BlogDataStore {
             throws SQLException {
         mDatabaseHelper.deleteAllTables();
     }
+
+
+    /**
+     * Retrieve the last post entry saved in the DB
+     *
+     * @return Posts List, empty list if no Post was found
+     * @throws UnknownError
+     */
+    public Post getLastPost() throws Exception {
+        Dao<Post, String> postDao = mDatabaseHelper.getPostDao();
+        QueryBuilder<Post, String> queryBuilder = postDao.queryBuilder();
+        return queryBuilder.orderBy(Post.CREATION_DATE, false).query().get(0);
+    }
+
+
 }
