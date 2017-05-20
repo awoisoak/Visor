@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.awoisoak.visor.data.source.Image;
 import com.awoisoak.visor.data.source.Post;
+import com.awoisoak.visor.data.source.WPAPI;
 import com.awoisoak.visor.presentation.VisorApplication;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -18,19 +19,6 @@ public class BlogDataStore {
     private static final Context sContext = VisorApplication.getVisorApplication();
     private final DatabaseHelper mDatabaseHelper;
     Dao<Post, Integer> mPostDao = null;
-
-
-    /**
-     * Default value in WP
-     * https://developer.wordpress.org/rest-api/reference/posts/#arguments
-     */
-    public static long MAX_NUMBER_POSTS_RETURNED = 10;
-
-    /**
-     * Default value in WP
-     * https://developer.wordpress.org/rest-api/reference/media/#arguments
-     */
-    public static int MAX_NUMBER_IMAGES_RETURNED = 10;
 
     /**
      * Private constructor.
@@ -107,7 +95,8 @@ public class BlogDataStore {
         try {
             Dao<Post, String> postDao = mDatabaseHelper.getPostDao();
             QueryBuilder<Post, String> queryBuilder = postDao.queryBuilder();
-            queryBuilder.orderBy(Post.CREATION_DATE,false).offset((long) offset).limit(MAX_NUMBER_POSTS_RETURNED);
+            queryBuilder.orderBy(Post.CREATION_DATE,false).offset((long) offset).limit(
+                    (long) WPAPI.MAX_NUMBER_POSTS_RETURNED);
             return postDao.query(queryBuilder.prepare());
         } catch (SQLException e) {
             throw new Exception("Error retrieving posts in the DB from offset = " + offset, e);
@@ -198,8 +187,8 @@ public class BlogDataStore {
     public List<Image> getImagesFromPost(String postId, int offset) throws Exception {
         try {
             List<Image> allImages = getAllImagesFromPost(postId);
-            if (allImages.size() >= offset + MAX_NUMBER_IMAGES_RETURNED) {
-                return allImages.subList(offset, (offset + MAX_NUMBER_IMAGES_RETURNED));
+            if (allImages.size() >= offset + WPAPI.MAX_NUMBER_IMAGES_RETURNED) {
+                return allImages.subList(offset, (offset + WPAPI.MAX_NUMBER_IMAGES_RETURNED));
             } else {
                 return allImages.subList(offset, allImages.size());
             }

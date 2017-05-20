@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Debug;
 import android.util.Log;
 
 import com.awoisoak.visor.data.source.Post;
@@ -14,11 +15,11 @@ import com.awoisoak.visor.data.source.responses.ErrorResponse;
 import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
 import com.awoisoak.visor.domain.interactors.PostsRequestInteractor;
 import com.awoisoak.visor.presentation.postgallery.PostGalleryActivity;
+import com.awoisoak.visor.service.Scheduler;
 import com.awoisoak.visor.signals.SignalManagerFactory;
 import com.awoisoak.visor.threading.ThreadPool;
 import com.squareup.otto.Subscribe;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,11 +60,12 @@ public class PostsListPresenterImpl implements PostsListPresenter {
         SignalManagerFactory.getSignalManager().register(this);
         mSharedPreferences = mView.getActivity().getPreferences(Context.MODE_PRIVATE);
         if (isPostsTableCreated()) {
-            //TODO We should check new entries using FirebaseJobDispatcher and triggering anAndroid Notification
             checkIfThereIsNewPostEntries();
         } else {
             requestNewPosts();
         }
+        //Schedule a service to check new entries
+        Scheduler.scheduleCheckingNewEntries(mView.getActivity());
     }
 
 
@@ -167,6 +169,7 @@ public class PostsListPresenterImpl implements PostsListPresenter {
                     mView.updatePostsList(response.getList());
                     mView.hideSnackbar();
                 }
+                mCheckingNewEntriesRunning = false;
                 mIsPostRequestRunning = false;
                 if (mOffset >= getTotalRecords()) {
                     mAllPostsDownloaded = true;
@@ -200,9 +203,9 @@ public class PostsListPresenterImpl implements PostsListPresenter {
                  * the posts from the database
                  */
                 if (mCheckingNewEntriesRunning && isPostsTableCreated()) {
-                    mCheckingNewEntriesRunning = false;
                     displayPostsFromDb();
                 }
+                mCheckingNewEntriesRunning = false;
             }
         });
     }
@@ -382,4 +385,9 @@ public class PostsListPresenterImpl implements PostsListPresenter {
             requestNewPosts();
         }
     }
+
+
+
+
+
 }

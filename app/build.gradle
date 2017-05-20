@@ -70,4 +70,8 @@ dependencies {
     // ORMLite
     compile 'com.j256.ormlite:ormlite-android:' + ORM_LITE
 
+    //Firebase JobDispatcher
+    compile 'com.firebase:firebase-jobdispatcher:'+ FIREBASE_JOB_DISPATCHER
+
+
 }

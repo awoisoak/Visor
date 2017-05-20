@@ -10,4 +10,7 @@
     <string name="title_activity_image_fullscreen">ImageFullscreenActivity</string>
     <string name="click_to_display_high_res">Click on a picture to display it in High-res</string>
     <string name="title_activity_webview">webview</string>
+    <string name="android_notification_title">Never Stop Travelling</string>
+    <string name="android_notification_text">Read my new entry about %1$s !</string>
+
 </resources>

@@ -4,7 +4,7 @@ public interface PostsRequestInteractor {
 
 
     /**
-     * Retrieve the {@link PostsRequestInteractor#MAX_NUMBER_POSTS_RETURNED} posts using the passed offset
+     * Retrieve the {@link com.awoisoak.visor.data.source.WPAPI#MAX_NUMBER_POSTS_RETURNED} posts using the passed offset
      * @param offset
      */
     void getPosts(int offset);

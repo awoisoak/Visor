@@ -28,6 +28,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+//TODO Check the bug with the hig-res pictures in last version of Android (related to the Subsampling Scale Image View?)
+
+
 public class PostsListActivity extends AppCompatActivity
         implements PostsListView, PostsListAdapter.PostItemClickListener {
     private static final String MARKER = PostsListActivity.class.getSimpleName();
