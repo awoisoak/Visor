@@ -9,6 +9,7 @@ The app filters out portrait and panoramic images for a better UIX {@see MediaFr
 Within the galleries, a first low resolution is downloaded to be displayed temporarily until the large resolution one is ready for responsiveness purposes 
 A floating button into the galleries activity opens a Webview with the corresponding blog entry.
 An ORMLite DB is used to keep a cache of the posts and images except high-res ones to avoid increasing too much the app size.
+The app includes a FirebaseJobDispatcher to check every 24h (only if Wi-Fi is enabled) whether a new entry is available and, in that case, display an Android Notification.
 
 Implementation details:
 
