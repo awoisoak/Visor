@@ -42,7 +42,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
     //SharedPreferences keys
     private static String IMAGES_TABLE_CREATED = "images_table_created_";
     private static String TOTAL_IMAGES = "total_records_";
-    boolean isFirstRequest= true;
+    boolean isFirstRequest = true;
 
     SharedPreferences mSharedPreferences;
 
@@ -75,9 +75,9 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
     public void onBottomReached() {
         if (mAllImagesDownloaded) {
             return;
-        }else if (isImagesTableCreated()) {
+        } else if (isImagesTableCreated()) {
             displayImagesFromDb();
-        }else {
+        } else {
             requestNewImages();
         }
     }
@@ -132,6 +132,12 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
          * Otherwise we might be saving images from a post entry into a different
          */
         synchronized (mPostId) {
+
+            if (response.getList().size() == 0) {
+                Log.d(MARKER,"onPostReceived | response.size = 0");
+                mView.hideSnackbar();
+                return;
+            }
 
             /**
              * To avoid the bug when opening/closing quickly several posts.
@@ -225,6 +231,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     /**
      * Save a list of images into the DB
+     *
      * @param images
      */
     private void saveImagesToDB(List<Image> images) {
@@ -242,6 +249,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
      * Save total number of images available in the post entry
      * In this case total records won't be the value given by the server, but the total number of images
      * after the filters have been applied {@see MediaFromPostDeserializer}
+     *
      * @param totalRecords
      */
     private void saveTotalRecords(int totalRecords) {
@@ -252,6 +260,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     /**
      * Get total number of images available in the post entry
+     *
      * @return
      */
     private int getTotalRecords() {
@@ -270,6 +279,7 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
 
     /**
      * Get images stored in the DB using the current offset
+     *
      * @return
      */
     private List<Image> getImagesFromDB() {
@@ -312,16 +322,17 @@ public class PostGalleryPresenterImpl implements PostGalleryPresenter {
      * If there are images available in the DB they will be displayed
      */
     private void displayImagesFromDb() {
-        if (getTotalRecords() == -1){// Becasuse we r filtering out images, so we can only trust the cache DB once all images were downloaded
+        if (getTotalRecords() ==
+                -1) {// Becasuse we r filtering out images, so we can only trust the cache DB once all images were downloaded
             requestNewImages();
-        }else {
+        } else {
             List<Image> imagesFromDB = getImagesFromDB();
             if (checkNumberOfImages(imagesFromDB.size())) {
                 mImages.addAll(imagesFromDB);
-                if (isFirstRequest){
+                if (isFirstRequest) {
                     isFirstRequest = false;
                     mView.bindImagesList(mImages);
-                } else{
+                } else {
                     mView.updatePostGallery(mImages);
                 }
 
