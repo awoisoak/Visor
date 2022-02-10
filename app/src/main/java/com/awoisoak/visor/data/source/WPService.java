@@ -5,6 +5,7 @@ import com.awoisoak.visor.data.source.responses.MediaFromPostResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Query;
 
 /**
@@ -48,6 +49,13 @@ public interface WPService {
     String WP_FEATURED_MEDIA = "wp:featuredmedia";
     String CONTENT = "content";
 
+    /**
+     * This header is now required, otherwise the parsing will fail
+     *
+     * @param offset
+     * @return
+     */
+    @Headers("Content-Type: application/json")
 
     /**
      * Retrieve the {@link WPAPI#MAX_NUMBER_POSTS_RETURNED}

@@ -15,7 +15,6 @@ import com.awoisoak.visor.data.source.responses.ErrorResponse;
 import com.awoisoak.visor.data.source.responses.ListsPostsResponse;
 import com.awoisoak.visor.domain.interactors.PostsRequestInteractor;
 import com.awoisoak.visor.presentation.postgallery.PostGalleryActivity;
-import com.awoisoak.visor.service.Scheduler;
 import com.awoisoak.visor.signals.SignalManagerFactory;
 import com.awoisoak.visor.threading.ThreadPool;
 import com.squareup.otto.Subscribe;
@@ -64,8 +63,10 @@ public class PostsListPresenterImpl implements PostsListPresenter {
         } else {
             requestNewPosts();
         }
-        //Schedule a service to check new entries
-        Scheduler.scheduleCheckingNewEntries(mView.getActivity());
+        //TODO FirebaseJobDispatcher deprecated
+
+//        //Schedule a service to check new entries
+//        Scheduler.scheduleCheckingNewEntries(mView.getActivity());
     }
 
 
@@ -385,9 +386,6 @@ public class PostsListPresenterImpl implements PostsListPresenter {
             requestNewPosts();
         }
     }
-
-
-
 
 
 }
